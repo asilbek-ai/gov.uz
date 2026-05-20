@@ -1,322 +1,673 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import cors from 'cors';
-import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
-import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config();
+
 const app = express();
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
-app.use(express.json({ limit: '50mb' }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Middleware
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ==================== DATABASE ====================
-const DB_FILE = path.join(__dirname, 'db.json');
+// Uploads folder
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
-const initDB = () => {
-  if (!fs.existsSync(DB_FILE)) {
-    const initialData = {
-      settings: {
-        siteName: "Jondor tumani rasmiy portali",
-        siteLogo: "🏛️",
-        contactPhone: "+998 65 123-45-67",
-        contactEmail: "info@jondor.uz",
-        contactAddress: "Jondor tumani, Buxoro viloyati",
-        workingHours: "Dushanba-Juma: 09:00 - 18:00",
-        socialLinks: {
-          telegram: "https://t.me/jondor",
-          facebook: "https://facebook.com/jondor",
-          instagram: "https://instagram.com/jondor",
-          youtube: "https://youtube.com/jondor"
-        }
-      },
-      heroSlides: [
-        { id: 1, title: "Buxoro viloyati", subtitle: "Jondor tumani rasmiy portali", description: "Ochiq ma'lumotlar, yangiliklar va davlat xizmatlari — bir joyda", image: "https://images.unsplash.com/photo-1541844053589-346841d0a17f?w=1600", cta1: "Xizmatlar", cta2: "Yangiliklar", order: 1, active: true },
-        { id: 2, title: "Yangi maktablar", subtitle: "Zamonaviy ta'lim maskanlari", description: "500 o'rinli zamonaviy maktablar qurilmoqda", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600", cta1: "Batafsil", cta2: "Yangiliklar", order: 2, active: true },
-        { id: 3, title: "Qishloq xo'jaligi", subtitle: "Yangi texnologiyalar joriy etilmoqda", description: "Mahsulotlar eksporti 25% ga oshdi", image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5c9a8?w=1600", cta1: "Batafsil", cta2: "Statistika", order: 3, active: true }
-      ],
-      statistics: [
-        { id: 1, label: "Aholi soni", value: 218000, icon: "users", suffix: "", prefix: "", color: "blue", order: 1 },
-        { id: 2, label: "Mahalla soni", value: 42, icon: "home", suffix: "", prefix: "", color: "green", order: 2 },
-        { id: 3, label: "Maktablar", value: 35, icon: "school", suffix: "", prefix: "", color: "purple", order: 3 },
-        { id: 4, label: "Tibbiyot muassasalari", value: 12, icon: "hospital", suffix: "", prefix: "", color: "red", order: 4 },
-        { id: 5, label: "Korxonalar", value: 156, icon: "factory", suffix: "", prefix: "", color: "orange", order: 5 },
-        { id: 6, label: "Fermer xo'jaliklari", value: 320, icon: "tractor", suffix: "", prefix: "", color: "teal", order: 6 }
-      ],
-      news: [],
-      services: [],
-      documents: [],
-      media: [],
-      contacts: [],
-      subscribers: [],
-      leadership: [
-        { id: 1, name: "Alijonov Bahodir", position: "Tuman hokimi", image: "https://randomuser.me/api/portraits/men/1.jpg", phone: "+998 65 123-45-67", email: "hokim@jondor.uz", order: 1 },
-        { id: 2, name: "Karimov Rustam", position: "Hokim o'rinbosari", image: "https://randomuser.me/api/portraits/men/3.jpg", phone: "+998 65 123-45-68", email: "rustam@jondor.uz", order: 2 }
-      ],
-      projects: [
-        { id: 1, title: "Yangi avtomobil yo'llari qurilishi", progress: 75, budget: "2.5 mlrd so'm", status: "active", deadline: "2025-12-31", description: "Tuman ichki yo'llarini ta'mirlash" },
-        { id: 2, title: "Suv ta'minoti tizimini modernizatsiya qilish", progress: 45, budget: "1.8 mlrd so'm", status: "active", deadline: "2026-06-30", description: "Suv tarmoqlarini yangilash" }
-      ],
-      vacancies: [
-        { id: 1, title: "Maktab o'qituvchisi", department: "Ta'lim bo'limi", deadline: "2025-09-15", salary: "3.5-4.5 mln", requirements: "Oliy ma'lumot", description: "Ingliz tili o'qituvchisi" }
-      ],
-      faqs: [
-        { id: 1, question: "Pasportni qanday muddatda olish mumkin?", answer: "Pasport 10 ish kunida tayyorlanadi. Tezkor xizmat 3 ish kunida." },
-        { id: 2, question: "Yer solig'ini qanday to'layman?", answer: "Soliq idorasiga murojaat qiling yoki my.gov.uz orqali onlayn to'lang." }
-      ],
-      partners: [
-        { id: 1, name: "O'zsanoatqurilishbank", icon: "university", url: "https://www.sanoatqurilishbank.uz", order: 1 },
-        { id: 2, name: "Uztelecom", icon: "wifi", url: "https://uztelecom.uz", order: 2 }
-      ],
-      testimonials: [
-        { id: 1, name: "Alijonov Bahodir", position: "Tadbirkor", text: "Davlat xizmatlari orqali tez va sifatli xizmat olaman.", rating: 5, image: "https://randomuser.me/api/portraits/men/1.jpg" }
-      ],
-      gallery: [
-        { id: 1, title: "Tuman markazi", image: "https://images.unsplash.com/photo-1541844053589-346841d0a17f?w=800", category: "Shahar", order: 1 },
-        { id: 2, title: "Park va bog'lar", image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800", category: "Tabiat", order: 2 }
-      ],
-      quickLinks: [
-        { id: 1, icon: "file-alt", title: "Hujjatlar", link: "/documents", color: "blue", order: 1 },
-        { id: 2, icon: "calendar-alt", title: "Tadbirlar", link: "/events", color: "green", order: 2 }
-      ],
-      announcements: [
-        { id: 1, title: "2025-yil 1-sentabrdan yangi o'quv yili boshlanadi", date: "2025-08-20", type: "info", urgent: false }
-      ]
-    };
-    fs.writeFileSync(DB_FILE, JSON.stringify(initialData, null, 2));
+// MongoDB Connection
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/jondor_portal';
+
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('✅ MongoDB connected successfully');
+}).catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  console.log('⚠️ Starting without MongoDB - using fallback data');
+});
+
+// ==================== SCHEMAS ====================
+
+const NewsSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  titleRu: { type: String },
+  content: { type: String, required: true },
+  contentRu: { type: String },
+  image: { type: String, default: 'https://images.pexels.com/photos/159740/classroom-school-desk-lecture-159740.jpeg?w=800' },
+  date: { type: Date, default: Date.now },
+  views: { type: Number, default: 0 }
+}, { timestamps: true });
+
+const ServiceSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  nameRu: { type: String },
+  icon: { type: String, default: 'gear' },
+  description: { type: String },
+  descriptionRu: { type: String },
+  department: { type: String }
+}, { timestamps: true });
+
+const StatisticSchema = new mongoose.Schema({
+  label: { type: String, required: true },
+  labelRu: { type: String },
+  value: { type: Number, required: true },
+  icon: { type: String, default: 'chart-line' },
+  color: { type: String, default: 'blue' },
+  prefix: { type: String, default: '' },
+  suffix: { type: String, default: '' }
+}, { timestamps: true });
+
+const OrganizationSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  nameRu: { type: String },
+  phone: { type: String },
+  email: { type: String },
+  address: { type: String },
+  website: { type: String }
+}, { timestamps: true });
+
+const GallerySchema = new mongoose.Schema({
+  image: { type: String, required: true },
+  title: { type: String },
+  titleRu: { type: String }
+}, { timestamps: true });
+
+const CarouselSchema = new mongoose.Schema({
+  image: { type: String, required: true },
+  title: { type: String },
+  titleRu: { type: String }
+}, { timestamps: true });
+
+const LeadershipSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  position: { type: String },
+  positionRu: { type: String },
+  image: { type: String },
+  phone: { type: String },
+  email: { type: String }
+}, { timestamps: true });
+
+const ContactSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String },
+  message: { type: String, required: true },
+  status: { type: String, default: 'new' }
+}, { timestamps: true });
+
+const SubscriberSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true }
+}, { timestamps: true });
+
+const AdminSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  name: { type: String }
+}, { timestamps: true });
+
+const DocumentSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  nameRu: { type: String },
+  file: { type: String },
+  size: { type: String },
+  type: { type: String, default: 'PDF' },
+  date: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+const FaqSchema = new mongoose.Schema({
+  question: { type: String, required: true },
+  questionRu: { type: String },
+  answer: { type: String },
+  answerRu: { type: String }
+}, { timestamps: true });
+
+// Models
+const News = mongoose.model('News', NewsSchema);
+const Service = mongoose.model('Service', ServiceSchema);
+const Statistic = mongoose.model('Statistic', StatisticSchema);
+const Organization = mongoose.model('Organization', OrganizationSchema);
+const Gallery = mongoose.model('Gallery', GallerySchema);
+const Carousel = mongoose.model('Carousel', CarouselSchema);
+const Leadership = mongoose.model('Leadership', LeadershipSchema);
+const Contact = mongoose.model('Contact', ContactSchema);
+const Subscriber = mongoose.model('Subscriber', SubscriberSchema);
+const Admin = mongoose.model('Admin', AdminSchema);
+const Document = mongoose.model('Document', DocumentSchema);
+const Faq = mongoose.model('Faq', FaqSchema);
+
+// ==================== FILE UPLOAD ====================
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
+
+// ==================== AUTH MIDDLEWARE ====================
+const auth = async (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Access denied. No token provided.' });
   }
-};
-
-const readDB = () => {
-  initDB();
-  return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-};
-
-const writeDB = (data) => {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-};
-
-// ==================== AUTH ====================
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@jondor.uz';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin123!';
-const ADMIN_PASSWORD_HASH = bcrypt.hashSync(ADMIN_PASSWORD, 10);
-
-const authRequired = (req, res, next) => {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-  if (!token) return res.status(401).json({ message: 'Unauthorized' });
   try {
-    jwt.verify(token, process.env.JWT_SECRET || 'dev_secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'jondor_secret_key_2024');
+    const admin = await Admin.findById(decoded.id).select('-password');
+    if (!admin) throw new Error();
+    req.admin = admin;
     next();
-  } catch {
-    return res.status(401).json({ message: 'Invalid token' });
+  } catch (e) {
+    res.status(401).json({ error: 'Invalid token.' });
   }
 };
 
-app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  if (email !== ADMIN_EMAIL) return res.status(401).json({ message: 'Invalid credentials' });
-  const ok = bcrypt.compareSync(password, ADMIN_PASSWORD_HASH);
-  if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
-  const token = jwt.sign({ email }, process.env.JWT_SECRET || 'dev_secret', { expiresIn: '24h' });
-  res.json({ token, user: { email, name: 'Admin' } });
+// ==================== API ROUTES ====================
+
+// ========== PUBLIC ROUTES ==========
+
+// News
+app.get('/api/news', async (req, res) => {
+  try {
+    const news = await News.find().sort({ date: -1 });
+    res.json(news);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ==================== CRUD GENERATOR ====================
-const createCRUD = (resource) => {
-  app.get(`/api/${resource}`, (req, res) => {
-    const db = readDB();
-    const { q } = req.query;
-    let items = db[resource] || [];
-    if (q) {
-      items = items.filter(item => 
-        (item.title && item.title.toLowerCase().includes(q.toLowerCase())) ||
-        (item.name && item.name.toLowerCase().includes(q.toLowerCase()))
-      );
+app.get('/api/news/:id', async (req, res) => {
+  try {
+    const news = await News.findById(req.params.id);
+    if (news) {
+      news.views += 1;
+      await news.save();
     }
-    res.json(items);
-  });
-  
-  app.get(`/api/${resource}/:id`, (req, res) => {
-    const db = readDB();
-    const item = (db[resource] || []).find(i => i.id == req.params.id);
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  });
-  
-  app.post(`/api/${resource}`, authRequired, (req, res) => {
-    const db = readDB();
-    const newId = Date.now();
-    const newItem = { ...req.body, id: newId, _id: newId.toString(), createdAt: new Date().toISOString() };
-    if (!db[resource]) db[resource] = [];
-    db[resource].unshift(newItem);
-    writeDB(db);
-    res.status(201).json(newItem);
-  });
-  
-  app.put(`/api/${resource}/:id`, authRequired, (req, res) => {
-    const db = readDB();
-    const index = (db[resource] || []).findIndex(i => i.id == req.params.id);
-    if (index === -1) return res.status(404).json({ message: 'Not found' });
-    db[resource][index] = { ...db[resource][index], ...req.body };
-    writeDB(db);
-    res.json(db[resource][index]);
-  });
-  
-  app.delete(`/api/${resource}/:id`, authRequired, (req, res) => {
-    const db = readDB();
-    if (db[resource]) {
-      db[resource] = db[resource].filter(i => i.id != req.params.id);
-      writeDB(db);
+    res.json(news);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Services
+app.get('/api/services', async (req, res) => {
+  try {
+    const services = await Service.find();
+    res.json(services);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Statistics
+app.get('/api/statistics', async (req, res) => {
+  try {
+    const stats = await Statistic.find();
+    res.json(stats);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Organizations
+app.get('/api/organizations', async (req, res) => {
+  try {
+    const orgs = await Organization.find();
+    res.json(orgs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Gallery
+app.get('/api/gallery', async (req, res) => {
+  try {
+    const gallery = await Gallery.find();
+    res.json(gallery);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Carousel
+app.get('/api/carousel', async (req, res) => {
+  try {
+    const carousel = await Carousel.find();
+    res.json(carousel);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Leadership
+app.get('/api/leadership', async (req, res) => {
+  try {
+    const leaders = await Leadership.find();
+    res.json(leaders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Documents
+app.get('/api/documents', async (req, res) => {
+  try {
+    const docs = await Document.find().sort({ date: -1 });
+    res.json(docs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// FAQs
+app.get('/api/faqs', async (req, res) => {
+  try {
+    const faqs = await Faq.find();
+    res.json(faqs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Contact
+app.post('/api/contact', async (req, res) => {
+  try {
+    const contact = new Contact(req.body);
+    await contact.save();
+    res.json({ success: true, message: 'Message sent successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Subscribe
+app.post('/api/subscribe', async (req, res) => {
+  try {
+    const existing = await Subscriber.findOne({ email: req.body.email });
+    if (existing) {
+      return res.json({ success: true, message: 'Already subscribed' });
     }
+    const subscriber = new Subscriber({ email: req.body.email });
+    await subscriber.save();
+    res.json({ success: true, message: 'Subscribed successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ========== ADMIN ROUTES ==========
+
+// Auth
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const admin = await Admin.findOne({ username });
+    if (!admin) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+    const isValid = await bcrypt.compare(password, admin.password);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+    const token = jwt.sign(
+      { id: admin._id, username: admin.username },
+      process.env.JWT_SECRET || 'jondor_secret_key_2024',
+      { expiresIn: '7d' }
+    );
+    res.json({
+      success: true,
+      token,
+      admin: { id: admin._id, username: admin.username, name: admin.name }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// News CRUD
+app.post('/api/news', auth, async (req, res) => {
+  try {
+    const news = new News(req.body);
+    await news.save();
+    res.json(news);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/news/:id', auth, async (req, res) => {
+  try {
+    const news = await News.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(news);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/news/:id', auth, async (req, res) => {
+  try {
+    await News.findByIdAndDelete(req.params.id);
     res.json({ success: true });
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Services CRUD
+app.post('/api/services', auth, async (req, res) => {
+  try {
+    const service = new Service(req.body);
+    await service.save();
+    res.json(service);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/services/:id', auth, async (req, res) => {
+  try {
+    await Service.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Statistics CRUD
+app.post('/api/statistics', auth, async (req, res) => {
+  try {
+    const stat = new Statistic(req.body);
+    await stat.save();
+    res.json(stat);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/statistics/:id', auth, async (req, res) => {
+  try {
+    await Statistic.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Organizations CRUD
+app.post('/api/organizations', auth, async (req, res) => {
+  try {
+    const org = new Organization(req.body);
+    await org.save();
+    res.json(org);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/organizations/:id', auth, async (req, res) => {
+  try {
+    await Organization.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Gallery CRUD
+app.post('/api/gallery', auth, async (req, res) => {
+  try {
+    const item = new Gallery(req.body);
+    await item.save();
+    res.json(item);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/gallery/:id', auth, async (req, res) => {
+  try {
+    await Gallery.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Carousel CRUD
+app.post('/api/carousel', auth, async (req, res) => {
+  try {
+    const item = new Carousel(req.body);
+    await item.save();
+    res.json(item);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/carousel/:id', auth, async (req, res) => {
+  try {
+    await Carousel.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Leadership CRUD
+app.post('/api/leadership', auth, async (req, res) => {
+  try {
+    const leader = new Leadership(req.body);
+    await leader.save();
+    res.json(leader);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/leadership/:id', auth, async (req, res) => {
+  try {
+    await Leadership.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Documents CRUD
+app.post('/api/documents', auth, async (req, res) => {
+  try {
+    const doc = new Document(req.body);
+    await doc.save();
+    res.json(doc);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/documents/:id', auth, async (req, res) => {
+  try {
+    await Document.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// FAQs CRUD
+app.post('/api/faqs', auth, async (req, res) => {
+  try {
+    const faq = new Faq(req.body);
+    await faq.save();
+    res.json(faq);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/faqs/:id', auth, async (req, res) => {
+  try {
+    await Faq.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Contacts (Admin only)
+app.get('/api/contacts', auth, async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.json(contacts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/contacts/:id', auth, async (req, res) => {
+  try {
+    await Contact.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Subscribers (Admin only)
+app.get('/api/subscribers', auth, async (req, res) => {
+  try {
+    const subscribers = await Subscriber.find().sort({ createdAt: -1 });
+    res.json(subscribers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Dashboard Stats
+app.get('/api/admin/stats', auth, async (req, res) => {
+  try {
+    const newsCount = await News.countDocuments();
+    const servicesCount = await Service.countDocuments();
+    const contactsCount = await Contact.countDocuments();
+    const subscribersCount = await Subscriber.countDocuments();
+    const organizationsCount = await Organization.countDocuments();
+    const galleryCount = await Gallery.countDocuments();
+    res.json({
+      newsCount,
+      servicesCount,
+      contactsCount,
+      subscribersCount,
+      organizationsCount,
+      galleryCount
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// File Upload
+app.post('/api/upload', auth, upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==================== INIT DEFAULT DATA ====================
+const initData = async () => {
+  try {
+    // Create default admin
+    const adminExists = await Admin.findOne({ username: 'admin' });
+    if (!adminExists) {
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await Admin.create({
+        username: 'admin',
+        password: hashedPassword,
+        name: 'Super Admin'
+      });
+      console.log('✅ Default admin created: admin / admin123');
+    }
+
+    // Create default statistics if none exist
+    const statsCount = await Statistic.countDocuments();
+    if (statsCount === 0) {
+      await Statistic.create([
+        { label: 'Aholi soni', labelRu: 'Численность населения', value: 128500, icon: 'users', color: 'blue' },
+        { label: 'Maktablar', labelRu: 'Школы', value: 42, icon: 'school', color: 'green' },
+        { label: 'Kasalxonalar', labelRu: 'Больницы', value: 3, icon: 'hospital', color: 'red' },
+        { label: 'Tadbirkorlar', labelRu: 'Предприниматели', value: 1250, icon: 'briefcase', color: 'purple' }
+      ]);
+      console.log('✅ Default statistics created');
+    }
+
+    // Create default carousel if none exist
+    const carouselCount = await Carousel.countDocuments();
+    if (carouselCount === 0) {
+      await Carousel.create([
+        { image: 'https://images.pexels.com/photos/154801/pexels-photo-154801.jpeg?w=1600', title: 'Jondor tumaniga xush kelibsiz', titleRu: 'Добро пожаловать в Джондорский район' },
+        { image: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?w=1600', title: 'Yangi investitsiyalar', titleRu: 'Новые инвестиции' }
+      ]);
+      console.log('✅ Default carousel created');
+    }
+
+    // Create default services if none exist
+    const servicesCount = await Service.countDocuments();
+    if (servicesCount === 0) {
+      await Service.create([
+        { name: 'Fuqarolik holati aktlari', nameRu: 'Акты гражданского состояния', icon: 'id-card', description: 'Tug\'ilish, nikoh va vafot hujjatlarini rasmiylashtirish', department: 'ZAGS' },
+        { name: 'Yer uchastkasi', nameRu: 'Земельный участок', icon: 'map-marked-alt', description: 'Yer uchastkasini ajratish va rasmiylashtirish', department: 'Yer resurslari' }
+      ]);
+      console.log('✅ Default services created');
+    }
+
+    // Create default news if none exist
+    const newsCount = await News.countDocuments();
+    if (newsCount === 0) {
+      await News.create([
+        { title: 'Jondor tumanida yangi maktab ochildi', titleRu: 'Новая школа открылась в Джондорском районе', content: '600 oʻrinli zamonaviy maktab foydalanishga topshirildi.', date: new Date(), image: 'https://images.pexels.com/photos/159740/classroom-school-desk-lecture-159740.jpeg?w=800' },
+        { title: 'Investitsiya forumida shartnomalar imzolandi', titleRu: 'На инвестиционном форуме подписаны контракты', content: '15 ta xorijiy kompaniya bilan hamkorlik o\'rnatildi.', date: new Date(), image: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?w=800' }
+      ]);
+      console.log('✅ Default news created');
+    }
+
+    // Create default organizations if none exist
+    const orgsCount = await Organization.countDocuments();
+    if (orgsCount === 0) {
+      await Organization.create([
+        { name: 'Jondor tuman hokimligi', nameRu: 'Хокимият Джондорского района', phone: '+998 65 380-00-00', email: 'info@jondor.uz', address: 'Jondor shahri, Mustaqillik ko\'chasi, 1' }
+      ]);
+      console.log('✅ Default organizations created');
+    }
+
+  } catch (err) {
+    console.error('Error initializing data:', err);
+  }
 };
 
-// Create all CRUD endpoints
-createCRUD('news');
-createCRUD('services');
-createCRUD('documents');
-createCRUD('media');
-createCRUD('statistics');
-createCRUD('leadership');
-createCRUD('projects');
-createCRUD('vacancies');
-createCRUD('faqs');
-createCRUD('partners');
-createCRUD('testimonials');
-createCRUD('gallery');
-createCRUD('quickLinks');
-createCRUD('announcements');
+initData();
 
-// ==================== SETTINGS ====================
-app.get('/api/settings', (req, res) => {
-  const db = readDB();
-  res.json(db.settings);
-});
-
-app.put('/api/settings', authRequired, (req, res) => {
-  const db = readDB();
-  db.settings = { ...db.settings, ...req.body };
-  writeDB(db);
-  res.json(db.settings);
-});
-
-// ==================== HERO SLIDES ====================
-app.get('/api/heroSlides', (req, res) => {
-  const db = readDB();
-  res.json(db.heroSlides.filter(s => s.active).sort((a, b) => a.order - b.order));
-});
-
-app.post('/api/heroSlides', authRequired, (req, res) => {
-  const db = readDB();
-  const newId = Date.now();
-  const newSlide = { ...req.body, id: newId, _id: newId.toString() };
-  db.heroSlides.push(newSlide);
-  writeDB(db);
-  res.status(201).json(newSlide);
-});
-
-app.put('/api/heroSlides/:id', authRequired, (req, res) => {
-  const db = readDB();
-  const index = db.heroSlides.findIndex(s => s.id == req.params.id);
-  if (index === -1) return res.status(404).json({ message: 'Not found' });
-  db.heroSlides[index] = { ...db.heroSlides[index], ...req.body };
-  writeDB(db);
-  res.json(db.heroSlides[index]);
-});
-
-app.delete('/api/heroSlides/:id', authRequired, (req, res) => {
-  const db = readDB();
-  db.heroSlides = db.heroSlides.filter(s => s.id != req.params.id);
-  writeDB(db);
-  res.json({ success: true });
-});
-
-// ==================== SUBSCRIBERS ====================
-app.post('/api/subscribe', (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email required' });
-  const db = readDB();
-  if (!db.subscribers.find(s => s.email === email)) {
-    db.subscribers.push({ id: Date.now(), email, subscribedAt: new Date().toISOString() });
-    writeDB(db);
-  }
-  res.json({ success: true });
-});
-
-app.get('/api/subscribers', authRequired, (req, res) => {
-  const db = readDB();
-  res.json(db.subscribers);
-});
-
-app.delete('/api/subscribers/:id', authRequired, (req, res) => {
-  const db = readDB();
-  db.subscribers = db.subscribers.filter(s => s.id != req.params.id);
-  writeDB(db);
-  res.json({ success: true });
-});
-
-// ==================== CONTACT ====================
-app.post('/api/contact', (req, res) => {
-  const db = readDB();
-  const newMsg = { ...req.body, id: Date.now(), createdAt: new Date().toISOString(), status: 'new' };
-  db.contacts.unshift(newMsg);
-  writeDB(db);
-  res.status(201).json({ success: true });
-});
-
-app.get('/api/contact', authRequired, (req, res) => {
-  const db = readDB();
-  res.json(db.contacts);
-});
-
-app.put('/api/contact/:id', authRequired, (req, res) => {
-  const db = readDB();
-  const index = db.contacts.findIndex(c => c.id == req.params.id);
-  if (index !== -1) {
-    db.contacts[index] = { ...db.contacts[index], ...req.body };
-    writeDB(db);
-    res.json(db.contacts[index]);
-  } else {
-    res.status(404).json({ message: 'Not found' });
-  }
-});
-
-app.delete('/api/contact/:id', authRequired, (req, res) => {
-  const db = readDB();
-  db.contacts = db.contacts.filter(c => c.id != req.params.id);
-  writeDB(db);
-  res.json({ success: true });
-});
-
-// ==================== STATISTICS DASHBOARD ====================
-app.get('/api/dashboard-stats', authRequired, (req, res) => {
-  const db = readDB();
-  res.json({
-    newsCount: db.news.length,
-    servicesCount: db.services.length,
-    documentsCount: db.documents.length,
-    mediaCount: db.media.length,
-    contactsCount: db.contacts.length,
-    subscribersCount: db.subscribers.length,
-    projectsCount: db.projects.length,
-    vacanciesCount: db.vacancies.length
-  });
-});
-
-// ==================== HEALTH ====================
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
-
+// ==================== START SERVER ====================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`🔐 Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+  console.log(`📡 API available at http://localhost:${PORT}/api`);
 });

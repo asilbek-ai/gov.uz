@@ -1,36 +1,19 @@
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: '/api',
+const API = axios.create({
+  baseURL: 'http://localhost:5000/api',
   headers: { 'Content-Type': 'application/json' }
 });
 
-export const setAuthToken = (token) => {
+// Add token to requests
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('adminToken');
   if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete api.defaults.headers.common['Authorization'];
+    config.headers.Authorization = `Bearer ${token}`;
   }
-};
-
-const token = localStorage.getItem('token');
-if (token) setAuthToken(token);
-
-// Interceptors
-api.interceptors.request.use(request => {
-  console.log('📤', request.method, request.url);
-  return request;
+  return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
-api.interceptors.response.use(
-  response => {
-    console.log('📥', response.status);
-    return response;
-  },
-  error => {
-    console.error('❌', error.response?.status, error.response?.data);
-    return Promise.reject(error);
-  }
-);
-
-export default api;
+export default API;
