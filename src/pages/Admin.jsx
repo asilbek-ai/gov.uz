@@ -1,3 +1,5 @@
+// src/pages/Admin.jsx - To'liq va to'g'ri ishlaydigan admin panel
+
 import { useState, useContext, useEffect } from 'react';
 import { AppContext } from '../App';
 
@@ -13,7 +15,8 @@ export default function Admin() {
     leadership, deleteLeadership, addLeadership,
     documents, deleteDocument, addDocument,
     faqs, deleteFaq, addFaq,
-    contacts, subscribers
+    contacts, subscribers,
+    receptionHours, updateReceptionHours
   } = useContext(AppContext);
   
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -31,6 +34,19 @@ export default function Admin() {
   const [carouselForm, setCarouselForm] = useState({ image: '', title: '', titleRu: '' });
   const [leaderForm, setLeaderForm] = useState({ name: '', position: '', positionRu: '', image: '', phone: '', email: '' });
   const [faqForm, setFaqForm] = useState({ question: '', questionRu: '', answer: '', answerRu: '' });
+  
+  // Reception Hours Form
+  const [receptionForm, setReceptionForm] = useState({
+    governor: { days: '', daysRu: '', time: '', location: '', locationRu: '' },
+    citizens: { days: '', daysRu: '', time: '', phone: '', phoneRu: '' }
+  });
+
+  // Load reception hours
+  useEffect(() => {
+    if (receptionHours) {
+      setReceptionForm(receptionHours);
+    }
+  }, [receptionHours]);
 
   // Responsive sidebar
   useEffect(() => {
@@ -62,6 +78,7 @@ export default function Admin() {
     }
   };
 
+  // News CRUD
   const handleAddNews = () => {
     if (!newsForm.title) {
       showMessage('Sarlavha kiritilmadi', 'error');
@@ -72,6 +89,7 @@ export default function Admin() {
     showMessage('Yangilik qo\'shildi!');
   };
 
+  // Services CRUD
   const handleAddService = () => {
     if (!serviceForm.name) {
       showMessage('Xizmat nomi kiritilmadi', 'error');
@@ -82,6 +100,7 @@ export default function Admin() {
     showMessage('Xizmat qo\'shildi!');
   };
 
+  // Statistics CRUD
   const handleAddStatistic = () => {
     if (!statForm.label) {
       showMessage('Statistika nomi kiritilmadi', 'error');
@@ -92,6 +111,7 @@ export default function Admin() {
     showMessage('Statistika qo\'shildi!');
   };
 
+  // Organizations CRUD
   const handleAddOrganization = () => {
     if (!orgForm.name) {
       showMessage('Tashkilot nomi kiritilmadi', 'error');
@@ -102,6 +122,7 @@ export default function Admin() {
     showMessage('Tashkilot qo\'shildi!');
   };
 
+  // Gallery CRUD
   const handleAddGallery = () => {
     if (!galleryForm.image) {
       showMessage('Rasm URL kiritilmadi', 'error');
@@ -112,6 +133,7 @@ export default function Admin() {
     showMessage('Rasm qo\'shildi!');
   };
 
+  // Carousel CRUD
   const handleAddCarousel = () => {
     if (!carouselForm.image) {
       showMessage('Rasm URL kiritilmadi', 'error');
@@ -122,6 +144,7 @@ export default function Admin() {
     showMessage('Karusel rasmi qo\'shildi!');
   };
 
+  // Leadership CRUD
   const handleAddLeadership = () => {
     if (!leaderForm.name) {
       showMessage('Rahbar nomi kiritilmadi', 'error');
@@ -132,6 +155,7 @@ export default function Admin() {
     showMessage('Rahbar qo\'shildi!');
   };
 
+  // FAQ CRUD
   const handleAddFaq = () => {
     if (!faqForm.question) {
       showMessage('Savol kiritilmadi', 'error');
@@ -140,6 +164,12 @@ export default function Admin() {
     addFaq({ ...faqForm, id: Date.now() });
     setFaqForm({ question: '', questionRu: '', answer: '', answerRu: '' });
     showMessage('FAQ qo\'shildi!');
+  };
+
+  // Reception Hours Update
+  const handleUpdateReception = () => {
+    updateReceptionHours(receptionForm);
+    showMessage('Qabul jadvali yangilandi!');
   };
 
   if (!isAdmin) {
@@ -187,8 +217,9 @@ export default function Admin() {
     { id: 'organizations', label: 'Tashkilotlar', icon: 'building', color: 'red' },
     { id: 'gallery', label: 'Galereya', icon: 'images', color: 'pink' },
     { id: 'carousel', label: 'Karusel', icon: 'sliders-h', color: 'indigo' },
+    { id: 'reception', label: 'Qabul jadvali', icon: 'calendar-alt', color: 'yellow' },
     { id: 'leadership', label: 'Rahbariyat', icon: 'users', color: 'teal' },
-    { id: 'faq', label: 'FAQ', icon: 'question-circle', color: 'yellow' },
+    { id: 'faq', label: 'FAQ', icon: 'question-circle', color: 'purple' },
     { id: 'contacts', label: 'Murojaatlar', icon: 'envelope', color: 'red' },
     { id: 'subscribers', label: 'Obunalar', icon: 'bell', color: 'blue' }
   ];
@@ -299,7 +330,7 @@ export default function Admin() {
 
         {/* Content */}
         <div className="p-4">
-          {/* Dashboard */}
+          {/* ==================== DASHBOARD ==================== */}
           {activeTab === 'dashboard' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Dashboard</h1>
@@ -364,7 +395,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* News Tab */}
+          {/* ==================== NEWS ==================== */}
           {activeTab === 'news' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Yangiliklar boshqaruvi</h1>
@@ -406,7 +437,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Services Tab */}
+          {/* ==================== SERVICES ==================== */}
           {activeTab === 'services' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Xizmatlar boshqaruvi</h1>
@@ -437,7 +468,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Statistics Tab */}
+          {/* ==================== STATISTICS ==================== */}
           {activeTab === 'statistics' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Statistika boshqaruvi</h1>
@@ -470,7 +501,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Organizations Tab */}
+          {/* ==================== ORGANIZATIONS ==================== */}
           {activeTab === 'organizations' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Tashkilotlar boshqaruvi</h1>
@@ -501,7 +532,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Gallery Tab */}
+          {/* ==================== GALLERY ==================== */}
           {activeTab === 'gallery' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Galereya boshqaruvi</h1>
@@ -533,7 +564,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Carousel Tab */}
+          {/* ==================== CAROUSEL ==================== */}
           {activeTab === 'carousel' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Karusel boshqaruvi</h1>
@@ -541,7 +572,7 @@ export default function Admin() {
                 <div className="p-5 bg-white shadow rounded-xl">
                   <h3 className="mb-4 text-lg font-bold">Rasm qo'shish</h3>
                   <div className="space-y-3">
-                    <input type="text" placeholder="Rasm URL" className="w-full px-3 py-2 border rounded-lg" value={carouselForm.image} onChange={(e) => setCarouselForm({ ...carouselForm, image: e.target.value })} />
+                    <input type="text" placeholder="Rasm URL (https://...)" className="w-full px-3 py-2 border rounded-lg" value={carouselForm.image} onChange={(e) => setCarouselForm({ ...carouselForm, image: e.target.value })} />
                     <input type="text" placeholder="Sarlavha (UZ)" className="w-full px-3 py-2 border rounded-lg" value={carouselForm.title} onChange={(e) => setCarouselForm({ ...carouselForm, title: e.target.value })} />
                     <input type="text" placeholder="Sarlavha (RU)" className="w-full px-3 py-2 border rounded-lg" value={carouselForm.titleRu} onChange={(e) => setCarouselForm({ ...carouselForm, titleRu: e.target.value })} />
                     <button onClick={handleAddCarousel} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
@@ -554,7 +585,9 @@ export default function Admin() {
                       <div key={item.id} className="flex items-center gap-3 p-2 border rounded-lg">
                         <img src={item.image} className="object-cover w-16 h-12 rounded" alt={item.title} />
                         <div className="flex-1"><div className="font-medium">{item.title}</div></div>
-                        <button onClick={() => deleteCarousel(item.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
+                        <button onClick={() => deleteCarousel(item.id)} className="text-red-500 hover:text-red-700">
+                          <i className="fas fa-trash"></i>
+                        </button>
                       </div>
                     ))}
                     {carousel.length === 0 && <p className="py-8 text-center text-gray-500">Hech qanday rasm yo'q</p>}
@@ -564,7 +597,75 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Leadership Tab */}
+          {/* ==================== RECEPTION HOURS ==================== */}
+          {activeTab === 'reception' && (
+            <div>
+              <h1 className="mb-6 text-2xl font-bold">Qabul jadvali boshqaruvi</h1>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="p-5 bg-white shadow rounded-xl">
+                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold">
+                    <i className="text-blue-500 fas fa-user-tie"></i> Tuman hokimi qabuli
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Kunlar (UZ)</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.days} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, days: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Kunlar (RU)</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.daysRu} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, daysRu: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Vaqt</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.time} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, time: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Manzil (UZ)</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.location} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, location: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Manzil (RU)</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.locationRu} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, locationRu: e.target.value } })} />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5 bg-white shadow rounded-xl">
+                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold">
+                    <i className="text-green-500 fas fa-users"></i> Fuqarolar qabuli
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Kunlar (UZ)</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.days} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, days: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Kunlar (RU)</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.daysRu} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, daysRu: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Vaqt</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.time} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, time: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Telefon</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.phone} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, phone: e.target.value } })} />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm font-medium">Telefon (RU)</label>
+                      <input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.phoneRu} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, phoneRu: e.target.value } })} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6">
+                <button onClick={handleUpdateReception} className="px-6 py-3 font-semibold text-white transition rounded-lg bg-primary hover:bg-primary/90">
+                  <i className="mr-2 fas fa-save"></i> Qabul jadvalini saqlash
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ==================== LEADERSHIP ==================== */}
           {activeTab === 'leadership' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Rahbariyat boshqaruvi</h1>
@@ -596,7 +697,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* FAQ Tab */}
+          {/* ==================== FAQ ==================== */}
           {activeTab === 'faq' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">FAQ boshqaruvi</h1>
@@ -626,7 +727,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Contacts Tab */}
+          {/* ==================== CONTACTS ==================== */}
           {activeTab === 'contacts' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Murojaatlar</h1>
@@ -653,7 +754,7 @@ export default function Admin() {
             </div>
           )}
 
-          {/* Subscribers Tab */}
+          {/* ==================== SUBSCRIBERS ==================== */}
           {activeTab === 'subscribers' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold">Obunalar</h1>

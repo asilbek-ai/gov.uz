@@ -10,7 +10,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 
 export default function Home() {
-  const { t, carousel, statistics, news, services, subscribe } = useContext(AppContext);
+  const { t, carousel, statistics, news, services, subscribe, receptionHours } = useContext(AppContext);
   const [countersStarted, setCountersStarted] = useState(false);
   const [subscriberEmail, setSubscriberEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -27,12 +27,10 @@ export default function Home() {
   const handleSubscribe = async (e) => {
     e.preventDefault();
     if (subscriberEmail) {
-      const result = await subscribe(subscriberEmail);
-      if (result) {
-        setSubscribed(true);
-        setSubscriberEmail('');
-        setTimeout(() => setSubscribed(false), 3000);
-      }
+      await subscribe(subscriberEmail);
+      setSubscribed(true);
+      setSubscriberEmail('');
+      setTimeout(() => setSubscribed(false), 3000);
     }
   };
 
@@ -49,17 +47,27 @@ export default function Home() {
 
   return (
     <div>
-      {/* Hero Slider */}
+      {/* Hero Slider - Karusel */}
       <div className="relative h-[500px] md:h-[600px] overflow-hidden">
-        <Swiper modules={[Autoplay, Pagination, Navigation, EffectFade]} effect="fade" autoplay={{ delay: 5000, disableOnInteraction: false }} pagination={{ clickable: true }} navigation loop className="h-full">
-          {carousel.map(slide => (
+        <Swiper 
+          modules={[Autoplay, Pagination, Navigation, EffectFade]} 
+          effect="fade" 
+          autoplay={{ delay: 4000, disableOnInteraction: false }} 
+          pagination={{ clickable: true }} 
+          navigation 
+          loop 
+          className="h-full"
+        >
+          {carousel && carousel.map((slide, index) => (
             <SwiperSlide key={slide.id}>
               <div className="relative w-full h-full">
                 <img src={slide.image} className="object-cover w-full h-full" alt={slide.title} />
                 <div className="absolute inset-0 bg-black/40" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="px-4 text-center text-white">
-                    <h1 className="mb-4 text-3xl font-bold md:text-5xl">{t(slide.title, slide.titleRu)}</h1>
+                    <h1 className="mb-4 text-3xl font-bold md:text-5xl animate-fadeInUp">
+                      {t(slide.title, slide.titleRu)}
+                    </h1>
                     <p className="mb-6 text-base md:text-xl">{t('Jondor tumani rasmiy portali', 'Официальный портал Джондорского района')}</p>
                     <Link to="/services">
                       <button className="px-5 py-2 text-sm transition rounded-full md:px-6 md:py-3 bg-primary hover:bg-primary/90 md:text-base">
@@ -88,7 +96,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Qabul jadvali */}
+      {/* Qabul jadvali - Admin boshqaradi */}
       <div className="py-12 bg-white md:py-16">
         <div className="container-custom">
           <div className="mb-8 text-center md:mb-10">
@@ -96,15 +104,23 @@ export default function Home() {
             <div className="w-16 h-0.5 bg-primary mx-auto mt-3 rounded-full"></div>
           </div>
           <div className="grid max-w-4xl gap-5 mx-auto md:grid-cols-2">
-            <div className="p-5 shadow bg-gradient-to-r from-blue-50 to-white rounded-xl">
-              <div className="flex items-center gap-3 mb-3"><i className="text-2xl fas fa-user-tie text-primary"></i><h3 className="text-lg font-bold">{t('Tuman hokimi', 'Хоким района')}</h3></div>
-              <p className="text-sm text-gray-600"><i className="w-5 fas fa-calendar-alt text-primary"></i> {t('Dushanba - Juma', 'Понедельник - Пятница')}</p>
-              <p className="text-sm text-gray-600"><i className="w-5 fas fa-clock text-primary"></i> 15:00 - 17:00</p>
+            <div className="p-5 transition shadow bg-gradient-to-r from-blue-50 to-white rounded-xl hover:shadow-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <i className="text-2xl fas fa-user-tie text-primary"></i>
+                <h3 className="text-lg font-bold">{t('Tuman hokimi', 'Хоким района')}</h3>
+              </div>
+              <p className="text-sm text-gray-600"><i className="w-5 fas fa-calendar-alt text-primary"></i> {t(receptionHours.governor.days, receptionHours.governor.daysRu)}</p>
+              <p className="text-sm text-gray-600"><i className="w-5 fas fa-clock text-primary"></i> {receptionHours.governor.time}</p>
+              <p className="text-sm text-gray-600"><i className="w-5 fas fa-map-marker-alt text-primary"></i> {t(receptionHours.governor.location, receptionHours.governor.locationRu)}</p>
             </div>
-            <div className="p-5 shadow bg-gradient-to-r from-green-50 to-white rounded-xl">
-              <div className="flex items-center gap-3 mb-3"><i className="text-2xl fas fa-users text-primary"></i><h3 className="text-lg font-bold">{t('Fuqarolar qabuli', 'Прием граждан')}</h3></div>
-              <p className="text-sm text-gray-600"><i className="w-5 fas fa-calendar-alt text-primary"></i> {t('Har payshanba', 'Каждый четверг')}</p>
-              <p className="text-sm text-gray-600"><i className="w-5 fas fa-clock text-primary"></i> 10:00 - 13:00</p>
+            <div className="p-5 transition shadow bg-gradient-to-r from-green-50 to-white rounded-xl hover:shadow-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <i className="text-2xl fas fa-users text-primary"></i>
+                <h3 className="text-lg font-bold">{t('Fuqarolar qabuli', 'Прием граждан')}</h3>
+              </div>
+              <p className="text-sm text-gray-600"><i className="w-5 fas fa-calendar-alt text-primary"></i> {t(receptionHours.citizens.days, receptionHours.citizens.daysRu)}</p>
+              <p className="text-sm text-gray-600"><i className="w-5 fas fa-clock text-primary"></i> {receptionHours.citizens.time}</p>
+              <p className="text-sm text-gray-600"><i className="w-5 fas fa-phone-alt text-primary"></i> {receptionHours.citizens.phone}</p>
             </div>
           </div>
         </div>
@@ -163,8 +179,13 @@ export default function Home() {
             {services.slice(0, 3).map(service => (
               <div key={service.id} className="p-4 transition bg-white shadow rounded-xl hover:shadow-lg">
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-xl"><i className={`fas fa-${service.icon} text-primary text-lg`}></i></div>
-                  <div><h3 className="text-sm font-bold md:text-base">{t(service.name, service.nameRu)}</h3><p className="mt-1 text-xs text-gray-600">{service.description}</p></div>
+                  <div className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-xl">
+                    <i className={`fas fa-${service.icon} text-primary text-lg`}></i>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold md:text-base">{t(service.name, service.nameRu)}</h3>
+                    <p className="mt-1 text-xs text-gray-600">{service.description}</p>
+                  </div>
                 </div>
               </div>
             ))}
