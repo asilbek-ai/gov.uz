@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../App';
 
-export default function NewsPage() {
+export default function News() {
   const { t, adminData } = useContext(AppContext);
   return (
     <div className="min-h-screen pb-16 pt-28">
