@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { AppContext } from '../App';
 
 export default function Media() {
@@ -15,45 +15,49 @@ export default function Media() {
   ];
   
   const images = gallery.length > 0 ? gallery : demoImages;
-  
+
   return (
-    <div className="min-h-screen py-16 pt-28">
+    <div className="min-h-screen py-16 pt-28 bg-gradient-to-b from-gray-50 to-white">
       <div className="container-custom">
-        <h1 className="mb-4 text-3xl font-bold text-center gradient-text">{t('Media galereya', 'Медиа галерея')}</h1>
-        <p className="mb-8 text-center text-gray-500">{t('Tumanimiz hayotidan foto va videolar', 'Фото и видео из жизни нашего района')}</p>
-        <div className="w-20 h-1 mx-auto mb-10 rounded-full bg-primary"></div>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-4">
+            {t('Media galereya', 'Медиа галерея')}
+          </h1>
+          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+            {t('Tumanimiz hayotidan foto va videolar', 'Фото и видео из жизни нашего района')}
+          </p>
+          <div className="w-24 h-1 bg-primary mx-auto mt-6 rounded-full"></div>
+        </div>
         
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {images.map(img => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {images.map((img, idx) => (
             <div 
               key={img.id} 
               onClick={() => setSelectedImage(img)} 
-              className="relative overflow-hidden transition-all duration-300 bg-white shadow-lg cursor-pointer rounded-xl group hover:shadow-2xl"
+              className="group relative overflow-hidden rounded-2xl cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
             >
-              <img src={img.image} className="object-cover w-full h-64 transition duration-500 group-hover:scale-110" alt={img.title} />
-              <div className="absolute inset-0 transition duration-300 opacity-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:opacity-100"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 text-white transition duration-300 translate-y-full group-hover:translate-y-0">
-                <p className="font-semibold">{t(img.title, img.titleRu)}</p>
+              <div className="h-64 overflow-hidden">
+                <img src={img.image} className="w-full h-full object-cover transition duration-500 group-hover:scale-110" alt={img.title} />
               </div>
-              <div className="absolute flex items-center justify-center w-10 h-10 transition duration-300 rounded-full opacity-0 top-4 right-4 bg-white/20 backdrop-blur group-hover:opacity-100">
-                <i className="text-white fas fa-search-plus"></i>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end justify-start p-4">
+                <p className="text-white font-semibold text-lg">{t(img.title, img.titleRu)}</p>
+              </div>
+              <div className="absolute top-4 right-4 w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                <i className="fas fa-search-plus text-white text-lg"></i>
               </div>
             </div>
           ))}
         </div>
       </div>
       
-      {/* Modal */}
       {selectedImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90" onClick={() => setSelectedImage(null)}>
-          <div className="w-full max-w-4xl overflow-hidden bg-white rounded-2xl" onClick={(e) => e.stopPropagation()}>
-            <img src={selectedImage.image} className="w-full h-auto" alt={selectedImage.title} />
-            <div className="flex items-center justify-between p-4">
-              <h3 className="text-lg font-bold">{t(selectedImage.title, selectedImage.titleRu)}</h3>
-              <button onClick={() => setSelectedImage(null)} className="px-4 py-2 text-white transition bg-red-500 rounded-lg hover:bg-red-600">
-                {t('Yopish', 'Закрыть')}
-              </button>
-            </div>
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4" onClick={() => setSelectedImage(null)}>
+          <button onClick={() => setSelectedImage(null)} className="absolute top-6 right-6 text-white text-3xl hover:text-gray-300 transition">
+            <i className="fas fa-times"></i>
+          </button>
+          <div className="max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage.image} className="w-full rounded-2xl" alt={selectedImage.title} />
+            <p className="text-center text-white mt-4 text-lg font-medium">{t(selectedImage.title, selectedImage.titleRu)}</p>
           </div>
         </div>
       )}

@@ -1,37 +1,41 @@
-import { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../App';
 
 export default function News() {
   const { t, news } = useContext(AppContext);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const filtered = news.filter(item => t(item.title, item.titleRu).toLowerCase().includes(searchTerm.toLowerCase()));
   
   return (
-    <div className="min-h-screen py-16 pt-28">
+    <div className="min-h-screen py-16 pt-28 bg-gradient-to-b from-gray-50 to-white">
       <div className="container-custom">
-        <h1 className="mb-4 text-3xl font-bold text-center gradient-text">{t('Yangiliklar', 'Новости')}</h1>
-        <p className="mb-8 text-center text-gray-500">{t('Eng muhim voqealar', 'Самые важные события')}</p>
-        <div className="w-20 h-1 mx-auto mb-10 rounded-full bg-primary"></div>
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold gradient-text">{t('Yangiliklar', 'Новости')}</h1>
+          <div className="w-20 h-1 bg-primary mx-auto mt-3 rounded-full"></div>
+        </div>
         
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {news.map(item => (
-            <Link key={item.id} to={`/news/${item.id}`} className="transition bg-white shadow-lg rounded-xl hover:shadow-2xl hover:-translate-y-1">
-              <img src={item.image} className="object-cover w-full h-48 rounded-t-xl" alt={item.title} />
+        <div className="max-w-md mx-auto mb-8">
+          <div className="relative">
+            <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" placeholder={t('Qidirish...', 'Поиск...')} className="w-full pl-10 pr-4 py-2 border rounded-lg" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+          </div>
+        </div>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filtered.map(item => (
+            <Link key={item.id} to={`/news/${item.id}`} className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition">
+              <img src={item.image} className="w-full h-48 object-cover" />
               <div className="p-4">
-                <p className="mb-2 text-xs text-gray-500"><i className="mr-1 far fa-calendar-alt"></i> {item.date}</p>
-                <h3 className="mb-2 text-lg font-bold line-clamp-2">{t(item.title, item.titleRu)}</h3>
-                <p className="text-sm text-gray-600 line-clamp-3">{item.content}</p>
-                <span className="inline-block mt-3 text-sm text-primary">{t('Davomi', 'Подробнее')} →</span>
+                <p className="text-gray-400 text-xs">{item.date}</p>
+                <h3 className="font-bold mt-1 line-clamp-2">{t(item.title, item.titleRu)}</h3>
               </div>
             </Link>
           ))}
         </div>
         
-        {news.length === 0 && (
-          <div className="py-12 text-center">
-            <i className="mb-4 text-5xl text-gray-300 fas fa-newspaper"></i>
-            <p className="text-gray-500">Hech qanday yangilik yo'q</p>
-          </div>
-        )}
+        {filtered.length === 0 && <div className="text-center py-10"><p className="text-gray-500">{t('Hech qanday yangilik topilmadi', 'Новости не найдены')}</p></div>}
       </div>
     </div>
   );
