@@ -152,17 +152,17 @@ export default function Admin() {
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#003580] to-[#001a4a] p-4">
-        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
-          <div className="text-center mb-8">
+        <div className="w-full max-w-md p-8 border shadow-2xl bg-white/95 backdrop-blur-sm rounded-2xl border-white/20">
+          <div className="mb-8 text-center">
             <div className="w-24 h-24 bg-gradient-to-br from-[#003580] to-[#0066cc] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-              <i className="fas fa-landmark text-white text-4xl"></i>
+              <i className="text-4xl text-white fas fa-landmark"></i>
             </div>
             <h2 className="text-2xl font-bold text-gray-800">Admin Panel</h2>
-            <p className="text-gray-500 text-sm mt-1">Jondor tumani boshqaruvi</p>
+            <p className="mt-1 text-sm text-gray-500">Jondor tumani boshqaruvi</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="relative">
-              <i className="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <i className="absolute text-gray-400 -translate-y-1/2 fas fa-user left-4 top-1/2"></i>
               <input 
                 type="text" 
                 placeholder="Login" 
@@ -172,7 +172,7 @@ export default function Admin() {
               />
             </div>
             <div className="relative">
-              <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <i className="absolute text-gray-400 -translate-y-1/2 fas fa-lock left-4 top-1/2"></i>
               <input 
                 type="password" 
                 placeholder="Parol" 
@@ -181,11 +181,11 @@ export default function Admin() {
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
               />
             </div>
-            {error && <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl flex items-center gap-2"><i className="fas fa-exclamation-circle"></i> {error}</div>}
+            {error && <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 rounded-xl"><i className="fas fa-exclamation-circle"></i> {error}</div>}
             <button type="submit" className="w-full py-3 bg-gradient-to-r from-[#003580] to-[#0066cc] text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-              <i className="fas fa-sign-in-alt mr-2"></i> Kirish
+              <i className="mr-2 fas fa-sign-in-alt"></i> Kirish
             </button>
-            <p className="text-center text-gray-400 text-xs">Demo: admin / admin123</p>
+            <p className="text-xs text-center text-gray-400">Demo: admin / admin123</p>
           </form>
         </div>
       </div>
@@ -225,16 +225,16 @@ export default function Admin() {
         {/* Sidebar Header */}
         <div className="bg-gradient-to-r from-[#003580] to-[#0066cc] p-5">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <i className="fas fa-landmark text-white text-2xl"></i>
+            <div className="flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
+              <i className="text-2xl text-white fas fa-landmark"></i>
             </div>
             <div>
-              <h1 className="text-white font-bold text-lg">Admin Panel</h1>
-              <p className="text-white/70 text-xs">Jondor tumani</p>
+              <h1 className="text-lg font-bold text-white">Admin Panel</h1>
+              <p className="text-xs text-white/70">Jondor tumani</p>
             </div>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="absolute top-5 right-4 text-white/70 hover:text-white md:hidden">
-            <i className="fas fa-times text-xl"></i>
+            <i className="text-xl fas fa-times"></i>
           </button>
         </div>
 
@@ -266,7 +266,7 @@ export default function Admin() {
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${activeTab === item.id ? item.bg : 'bg-gray-100'}`}>
                 <i className={`fas fa-${item.icon} text-sm ${activeTab === item.id ? item.text : 'text-gray-500'}`}></i>
               </div>
-              <span className="text-sm font-medium flex-1 text-left">{item.label}</span>
+              <span className="flex-1 text-sm font-medium text-left">{item.label}</span>
               {item.id === 'contacts' && contacts.length > 0 && (
                 <span className="px-2 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">{contacts.length}</span>
               )}
@@ -295,8 +295,8 @@ export default function Admin() {
       {/* Main Content */}
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'md:ml-72' : 'ml-0'}`}>
         {/* Top Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white shadow-sm border-b">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-gray-100 transition">
+        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b shadow-sm">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 transition rounded-lg hover:bg-gray-100">
             <i className="text-xl fas fa-bars text-[#003580]"></i>
           </button>
           <div className="flex items-center gap-4">
@@ -306,9 +306,9 @@ export default function Admin() {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 bg-gradient-to-br from-[#003580] to-[#0066cc] rounded-full flex items-center justify-center text-white shadow-md">
-                <i className="fas fa-user text-sm"></i>
+                <i className="text-sm fas fa-user"></i>
               </div>
-              <span className="text-sm font-medium text-gray-700 hidden sm:inline">Admin</span>
+              <span className="hidden text-sm font-medium text-gray-700 sm:inline">Admin</span>
             </div>
           </div>
         </div>
@@ -318,63 +318,63 @@ export default function Admin() {
           {/* DASHBOARD */}
           {activeTab === 'dashboard' && (
             <div className="animate-fadeIn">
-              <h1 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <h1 className="flex items-center gap-2 mb-6 text-2xl font-bold text-gray-800">
                 <i className="fas fa-chart-line text-[#003580]"></i> Dashboard
               </h1>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex justify-between items-start">
+              <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
+                <div className="p-5 transition bg-white border border-gray-100 shadow-sm rounded-xl hover:shadow-md">
+                  <div className="flex items-start justify-between">
                     <div>
                       <div className="text-3xl font-bold text-[#003580]">{news.length}</div>
-                      <div className="text-sm text-gray-500 mt-1">Yangiliklar</div>
+                      <div className="mt-1 text-sm text-gray-500">Yangiliklar</div>
                     </div>
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <i className="fas fa-newspaper text-blue-600 text-xl"></i>
+                    <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl">
+                      <i className="text-xl text-blue-600 fas fa-newspaper"></i>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex justify-between items-start">
+                <div className="p-5 transition bg-white border border-gray-100 shadow-sm rounded-xl hover:shadow-md">
+                  <div className="flex items-start justify-between">
                     <div>
                       <div className="text-3xl font-bold text-[#003580]">{services.length}</div>
-                      <div className="text-sm text-gray-500 mt-1">Xizmatlar</div>
+                      <div className="mt-1 text-sm text-gray-500">Xizmatlar</div>
                     </div>
-                    <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <i className="fas fa-th-large text-purple-600 text-xl"></i>
+                    <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-xl">
+                      <i className="text-xl text-purple-600 fas fa-th-large"></i>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex justify-between items-start">
+                <div className="p-5 transition bg-white border border-gray-100 shadow-sm rounded-xl hover:shadow-md">
+                  <div className="flex items-start justify-between">
                     <div>
                       <div className="text-3xl font-bold text-[#003580]">{organizations.length}</div>
-                      <div className="text-sm text-gray-500 mt-1">Tashkilotlar</div>
+                      <div className="mt-1 text-sm text-gray-500">Tashkilotlar</div>
                     </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                      <i className="fas fa-building text-green-600 text-xl"></i>
+                    <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl">
+                      <i className="text-xl text-green-600 fas fa-building"></i>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex justify-between items-start">
+                <div className="p-5 transition bg-white border border-gray-100 shadow-sm rounded-xl hover:shadow-md">
+                  <div className="flex items-start justify-between">
                     <div>
                       <div className="text-3xl font-bold text-[#003580]">{subscribers.length}</div>
-                      <div className="text-sm text-gray-500 mt-1">Obunalar</div>
+                      <div className="mt-1 text-sm text-gray-500">Obunalar</div>
                     </div>
-                    <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                      <i className="fas fa-bell text-orange-600 text-xl"></i>
+                    <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-xl">
+                      <i className="text-xl text-orange-600 fas fa-bell"></i>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="mt-8">
-                <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <h2 className="flex items-center gap-2 mb-4 text-lg font-bold text-gray-800">
                   <i className="fas fa-envelope text-[#003580]"></i> So'nggi murojaatlar
                 </h2>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="overflow-hidden bg-white border border-gray-100 shadow-sm rounded-xl">
                   {contacts.slice(0, 5).map(contact => (
-                    <div key={contact.id} className="p-4 border-b hover:bg-gray-50 transition">
-                      <div className="flex justify-between items-start">
+                    <div key={contact.id} className="p-4 transition border-b hover:bg-gray-50">
+                      <div className="flex items-start justify-between">
                         <div>
                           <div className="font-medium text-gray-800">{contact.name}</div>
                           <div className="text-sm text-gray-500">{contact.email}</div>
@@ -393,25 +393,25 @@ export default function Admin() {
           {/* NEWS TAB */}
           {activeTab === 'news' && (
             <div className="animate-fadeIn">
-              <h1 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <i className="fas fa-newspaper text-green-600"></i> Yangiliklar boshqaruvi
+              <h1 className="flex items-center gap-2 mb-6 text-2xl font-bold text-gray-800">
+                <i className="text-green-600 fas fa-newspaper"></i> Yangiliklar boshqaruvi
               </h1>
-              <div className="grid lg:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><i className="fas fa-plus-circle text-green-500"></i> Yangilik qo'shish</h3>
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
+                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold"><i className="text-green-500 fas fa-plus-circle"></i> Yangilik qo'shish</h3>
                   <div className="space-y-4">
                     <input type="text" placeholder="Sarlavha (UZ)" className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:border-[#003580]" value={newsForm.title} onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })} />
                     <input type="text" placeholder="Sarlavha (RU)" className="w-full px-4 py-2.5 border rounded-lg" value={newsForm.titleRu} onChange={(e) => setNewsForm({ ...newsForm, titleRu: e.target.value })} />
                     <textarea placeholder="Matn" rows="4" className="w-full px-4 py-2.5 border rounded-lg" value={newsForm.content} onChange={(e) => setNewsForm({ ...newsForm, content: e.target.value })}></textarea>
-                    <div className="border-2 border-dashed rounded-lg p-4 text-center">
+                    <div className="p-4 text-center border-2 border-dashed rounded-lg">
                       {newsForm.image ? (
                         <div className="relative inline-block">
-                          <img src={newsForm.image} className="h-28 rounded-lg object-cover" />
-                          <button onClick={() => setNewsForm({ ...newsForm, image: '' })} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6">×</button>
+                          <img src={newsForm.image} className="object-cover rounded-lg h-28" />
+                          <button onClick={() => setNewsForm({ ...newsForm, image: '' })} className="absolute w-6 h-6 text-white bg-red-500 rounded-full -top-2 -right-2">×</button>
                         </div>
                       ) : (
-                        <label className="cursor-pointer block">
-                          <i className="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                        <label className="block cursor-pointer">
+                          <i className="mb-2 text-3xl text-gray-400 fas fa-cloud-upload-alt"></i>
                           <p className="text-sm text-gray-500">Rasm yuklash</p>
                           <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setNewsForm, 'image')} />
                         </label>
@@ -420,19 +420,19 @@ export default function Admin() {
                     <button onClick={handleAddNews} className="w-full py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:shadow-lg transition">Qo'shish</button>
                   </div>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><i className="fas fa-list text-green-600"></i> Yangiliklar ({news.length})</h3>
+                <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
+                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold"><i className="text-green-600 fas fa-list"></i> Yangiliklar ({news.length})</h3>
                   <div className="space-y-3 max-h-[500px] overflow-y-auto">
                     {news.map(item => (
-                      <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <div key={item.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                         <div>
                           <div className="font-medium">{item.title}</div>
                           <div className="text-xs text-gray-500">{item.date}</div>
                         </div>
-                        <button onClick={() => deleteNews(item.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i className="fas fa-trash"></i></button>
+                        <button onClick={() => deleteNews(item.id)} className="p-2 text-red-500 rounded-lg hover:bg-red-50"><i className="fas fa-trash"></i></button>
                       </div>
                     ))}
-                    {news.length === 0 && <div className="text-center py-8 text-gray-500">Hech qanday yangilik yo'q</div>}
+                    {news.length === 0 && <div className="py-8 text-center text-gray-500">Hech qanday yangilik yo'q</div>}
                   </div>
                 </div>
               </div>
@@ -450,18 +450,18 @@ export default function Admin() {
 
           {/* SERVICES TAB - Quick version */}
           {activeTab === 'services' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Xizmatlar boshqaruvi</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Xizmatlar boshqaruvi</h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <input type="text" placeholder="Nomi (UZ)" className="w-full p-2 border rounded" value={serviceForm.name} onChange={e => setServiceForm({...serviceForm, name: e.target.value})} />
                   <input type="text" placeholder="Icon" className="w-full p-2 border rounded" value={serviceForm.icon} onChange={e => setServiceForm({...serviceForm, icon: e.target.value})} />
                   <textarea placeholder="Tavsif" rows="3" className="w-full p-2 border rounded" value={serviceForm.description} onChange={e => setServiceForm({...serviceForm, description: e.target.value})} />
-                  <button onClick={handleAddService} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
+                  <button onClick={handleAddService} className="w-full p-2 text-white rounded bg-primary">Qo'shish</button>
                 </div>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-2 overflow-y-auto max-h-96">
                   {services.map(s => (
-                    <div key={s.id} className="flex justify-between items-center p-2 border-b">
+                    <div key={s.id} className="flex items-center justify-between p-2 border-b">
                       <span>{s.name}</span>
                       <button onClick={() => deleteService(s.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
                     </div>
@@ -473,20 +473,20 @@ export default function Admin() {
 
           {/* STATISTICS TAB */}
           {activeTab === 'statistics' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Statistika boshqaruvi</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Statistika boshqaruvi</h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <input type="text" placeholder="Nomi (UZ)" className="w-full p-2 border rounded" value={statForm.label} onChange={e => setStatForm({...statForm, label: e.target.value})} />
                   <input type="number" placeholder="Qiymat" className="w-full p-2 border rounded" value={statForm.value} onChange={e => setStatForm({...statForm, value: parseInt(e.target.value)})} />
                   <select className="w-full p-2 border rounded" value={statForm.color} onChange={e => setStatForm({...statForm, color: e.target.value})}>
                     <option value="blue">Blue</option><option value="green">Green</option><option value="red">Red</option><option value="purple">Purple</option>
                   </select>
-                  <button onClick={handleAddStatistic} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
+                  <button onClick={handleAddStatistic} className="w-full p-2 text-white rounded bg-primary">Qo'shish</button>
                 </div>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-2 overflow-y-auto max-h-96">
                   {statistics.map(s => (
-                    <div key={s.id} className="flex justify-between items-center p-2 border-b">
+                    <div key={s.id} className="flex items-center justify-between p-2 border-b">
                       <span>{s.label}: {s.value}</span>
                       <button onClick={() => deleteStatistic(s.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
                     </div>
@@ -498,17 +498,17 @@ export default function Admin() {
 
           {/* ORGANIZATIONS TAB */}
           {activeTab === 'organizations' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Tashkilotlar boshqaruvi</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Tashkilotlar boshqaruvi</h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
                   <input type="text" placeholder="Nomi (UZ)" className="w-full p-2 border rounded" value={orgForm.name} onChange={e => setOrgForm({...orgForm, name: e.target.value})} />
                   <input type="text" placeholder="Telefon" className="w-full p-2 border rounded" value={orgForm.phone} onChange={e => setOrgForm({...orgForm, phone: e.target.value})} />
-                  <button onClick={handleAddOrganization} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
+                  <button onClick={handleAddOrganization} className="w-full p-2 text-white rounded bg-primary">Qo'shish</button>
                 </div>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-2 overflow-y-auto max-h-96">
                   {organizations.map(o => (
-                    <div key={o.id} className="flex justify-between items-center p-2 border-b">
+                    <div key={o.id} className="flex items-center justify-between p-2 border-b">
                       <span>{o.name}</span>
                       <button onClick={() => deleteOrganization(o.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
                     </div>
@@ -520,29 +520,29 @@ export default function Admin() {
 
           {/* GALLERY TAB */}
           {activeTab === 'gallery' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Galereya boshqaruvi</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Galereya boshqaruvi</h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
-                  <div className="border-2 border-dashed p-4 text-center">
+                  <div className="p-4 text-center border-2 border-dashed">
                     {galleryForm.image ? (
                       <img src={galleryForm.image} className="h-24 mx-auto rounded" />
                     ) : (
-                      <label className="cursor-pointer block">
-                        <i className="fas fa-cloud-upload-alt text-2xl text-gray-400"></i>
+                      <label className="block cursor-pointer">
+                        <i className="text-2xl text-gray-400 fas fa-cloud-upload-alt"></i>
                         <p className="text-sm">Rasm yuklash</p>
                         <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setGalleryForm, 'image')} />
                       </label>
                     )}
                   </div>
                   <input type="text" placeholder="Sarlavha" className="w-full p-2 border rounded" value={galleryForm.title} onChange={e => setGalleryForm({...galleryForm, title: e.target.value})} />
-                  <button onClick={handleAddGallery} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
+                  <button onClick={handleAddGallery} className="w-full p-2 text-white rounded bg-primary">Qo'shish</button>
                 </div>
-                <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2 overflow-y-auto max-h-96">
                   {gallery.map(g => (
                     <div key={g.id} className="relative group">
-                      <img src={g.image} className="w-full h-24 object-cover rounded" />
-                      <button onClick={() => deleteGallery(g.id)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 opacity-0 group-hover:opacity-100"><i className="fas fa-trash text-xs"></i></button>
+                      <img src={g.image} className="object-cover w-full h-24 rounded" />
+                      <button onClick={() => deleteGallery(g.id)} className="absolute w-5 h-5 text-white bg-red-500 rounded-full opacity-0 top-1 right-1 group-hover:opacity-100"><i className="text-xs fas fa-trash"></i></button>
                     </div>
                   ))}
                 </div>
@@ -552,20 +552,20 @@ export default function Admin() {
 
           {/* CAROUSEL TAB */}
           {activeTab === 'carousel' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Karusel boshqaruvi</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Karusel boshqaruvi</h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-3">
-                  <div className="border-2 border-dashed p-4 text-center">
-                    {carouselForm.image ? <img src={carouselForm.image} className="h-24 mx-auto rounded" /> : <label className="cursor-pointer block"><i className="fas fa-cloud-upload-alt text-2xl text-gray-400"></i><p className="text-sm">Rasm yuklash</p><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setCarouselForm, 'image')} /></label>}
+                  <div className="p-4 text-center border-2 border-dashed">
+                    {carouselForm.image ? <img src={carouselForm.image} className="h-24 mx-auto rounded" /> : <label className="block cursor-pointer"><i className="text-2xl text-gray-400 fas fa-cloud-upload-alt"></i><p className="text-sm">Rasm yuklash</p><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setCarouselForm, 'image')} /></label>}
                   </div>
                   <input type="text" placeholder="Sarlavha" className="w-full p-2 border rounded" value={carouselForm.title} onChange={e => setCarouselForm({...carouselForm, title: e.target.value})} />
-                  <button onClick={handleAddCarousel} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
+                  <button onClick={handleAddCarousel} className="w-full p-2 text-white rounded bg-primary">Qo'shish</button>
                 </div>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-2 overflow-y-auto max-h-96">
                   {carousel.map(c => (
                     <div key={c.id} className="flex items-center gap-3 p-2 border rounded">
-                      <img src={c.image} className="w-12 h-10 object-cover rounded" />
+                      <img src={c.image} className="object-cover w-12 h-10 rounded" />
                       <span className="flex-1 text-sm">{c.title}</span>
                       <button onClick={() => deleteCarousel(c.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
                     </div>
@@ -577,19 +577,19 @@ export default function Admin() {
 
           {/* RECEPTION TAB */}
           {activeTab === 'reception' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Qabul jadvali boshqaruvi</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h3 className="font-bold mb-3"><i className="fas fa-user-tie text-blue-600 mr-2"></i> Tuman hokimi</h3>
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Qabul jadvali boshqaruvi</h2>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="p-4 rounded-lg bg-blue-50">
+                  <h3 className="mb-3 font-bold"><i className="mr-2 text-blue-600 fas fa-user-tie"></i> Tuman hokimi</h3>
                   <div className="space-y-2">
                     <input type="text" placeholder="Kunlar (UZ)" className="w-full p-2 border rounded" value={receptionForm.governor.days} onChange={e => setReceptionForm({...receptionForm, governor: {...receptionForm.governor, days: e.target.value}})} />
                     <input type="text" placeholder="Vaqt" className="w-full p-2 border rounded" value={receptionForm.governor.time} onChange={e => setReceptionForm({...receptionForm, governor: {...receptionForm.governor, time: e.target.value}})} />
                     <input type="text" placeholder="Manzil" className="w-full p-2 border rounded" value={receptionForm.governor.location} onChange={e => setReceptionForm({...receptionForm, governor: {...receptionForm.governor, location: e.target.value}})} />
                   </div>
                 </div>
-                <div className="p-4 bg-green-50 rounded-lg">
-                  <h3 className="font-bold mb-3"><i className="fas fa-users text-green-600 mr-2"></i> Fuqarolar qabuli</h3>
+                <div className="p-4 rounded-lg bg-green-50">
+                  <h3 className="mb-3 font-bold"><i className="mr-2 text-green-600 fas fa-users"></i> Fuqarolar qabuli</h3>
                   <div className="space-y-2">
                     <input type="text" placeholder="Kunlar (UZ)" className="w-full p-2 border rounded" value={receptionForm.citizens.days} onChange={e => setReceptionForm({...receptionForm, citizens: {...receptionForm.citizens, days: e.target.value}})} />
                     <input type="text" placeholder="Vaqt" className="w-full p-2 border rounded" value={receptionForm.citizens.time} onChange={e => setReceptionForm({...receptionForm, citizens: {...receptionForm.citizens, time: e.target.value}})} />
@@ -597,23 +597,23 @@ export default function Admin() {
                   </div>
                 </div>
               </div>
-              <button onClick={handleUpdateReception} className="mt-6 px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition"><i className="fas fa-save mr-2"></i> Saqlash</button>
+              <button onClick={handleUpdateReception} className="mt-6 px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition"><i className="mr-2 fas fa-save"></i> Saqlash</button>
             </div>
           )}
 
           {/* CONTACTS TAB */}
           {activeTab === 'contacts' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Murojaatlar</h2>
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Murojaatlar</h2>
               {contacts.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">Hech qanday murojaat yo'q</div>
+                <div className="py-8 text-center text-gray-500">Hech qanday murojaat yo'q</div>
               ) : (
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="space-y-3 overflow-y-auto max-h-96">
                   {contacts.map(c => (
-                    <div key={c.id} className="p-3 bg-gray-50 rounded-lg">
+                    <div key={c.id} className="p-3 rounded-lg bg-gray-50">
                       <div className="font-bold">{c.name}</div>
                       <div className="text-sm text-gray-500">{c.email}</div>
-                      <p className="text-sm mt-1">{c.message}</p>
+                      <p className="mt-1 text-sm">{c.message}</p>
                     </div>
                   ))}
                 </div>
@@ -623,14 +623,14 @@ export default function Admin() {
 
           {/* SUBSCRIBERS TAB */}
           {activeTab === 'subscribers' && (
-            <div className="bg-white rounded-xl p-6">
-              <h2 className="text-xl font-bold mb-4">Obunalar</h2>
+            <div className="p-6 bg-white rounded-xl">
+              <h2 className="mb-4 text-xl font-bold">Obunalar</h2>
               {subscribers.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">Hech qanday obuna yo'q</div>
+                <div className="py-8 text-center text-gray-500">Hech qanday obuna yo'q</div>
               ) : (
                 <div className="space-y-2">
                   {subscribers.map(s => (
-                    <div key={s.id} className="flex justify-between items-center p-2 border-b">
+                    <div key={s.id} className="flex items-center justify-between p-2 border-b">
                       <span>{s.email}</span>
                       <span className="text-xs text-gray-400">{s.date}</span>
                     </div>
