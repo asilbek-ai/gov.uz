@@ -9,6 +9,7 @@ import AdminCarousel from './AdminCarousel';
 import AdminLeadership from './AdminLeadership';
 import AdminFaq from './AdminFaq';
 import AdminDocuments from './AdminDocuments';
+import AdminDashboardSettings from './AdminDashboardSettings';
 
 export default function Admin() {
   const { 
@@ -95,6 +96,7 @@ export default function Admin() {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'chart-line', color: 'blue' },
+    { id: 'dashboardSettings', label: 'Dashboard sozlamalari', icon: 'tachometer-alt', color: 'cyan' },
     { id: 'news', label: 'Yangiliklar', icon: 'newspaper', color: 'green' },
     { id: 'services', label: 'Xizmatlar', icon: 'th-large', color: 'purple' },
     { id: 'statistics', label: 'Statistika', icon: 'chart-bar', color: 'orange' },
@@ -110,7 +112,7 @@ export default function Admin() {
   ];
 
   const getColorClass = (color) => {
-    const colors = { blue: 'bg-blue-500', green: 'bg-green-500', purple: 'bg-purple-500', orange: 'bg-orange-500', red: 'bg-red-500', pink: 'bg-pink-500', indigo: 'bg-indigo-500', teal: 'bg-teal-500', yellow: 'bg-yellow-500' };
+    const colors = { blue: 'bg-blue-500', green: 'bg-green-500', purple: 'bg-purple-500', orange: 'bg-orange-500', red: 'bg-red-500', pink: 'bg-pink-500', indigo: 'bg-indigo-500', teal: 'bg-teal-500', yellow: 'bg-yellow-500', cyan: 'bg-cyan-500' };
     return colors[color] || 'bg-primary';
   };
 
@@ -170,10 +172,10 @@ export default function Admin() {
               </div>
               <span className="text-sm font-medium flex-1 text-left">{item.label}</span>
               {item.id === 'contacts' && contacts.length > 0 && (
-                <span className="px-2 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">{contacts.length}</span>
+                <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">{contacts.length}</span>
               )}
               {item.id === 'subscribers' && subscribers.length > 0 && (
-                <span className="px-2 py-0.5 text-xs font-bold text-white bg-blue-500 rounded-full">{subscribers.length}</span>
+                <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-blue-500 rounded-full">{subscribers.length}</span>
               )}
             </button>
           ))}
@@ -247,6 +249,9 @@ export default function Admin() {
             </div>
           )}
 
+          {/* DASHBOARD SETTINGS TAB */}
+          {activeTab === 'dashboardSettings' && <AdminDashboardSettings />}
+          
           {/* NEWS TAB */}
           {activeTab === 'news' && <AdminNews />}
           
