@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import AddModal from '../components/AddModal';
 import toast from 'react-hot-toast';
 
-export default function AdminCarousel() {
-  const { carousel, addCarousel, deleteCarousel, updateCarousel } = useContext(AppContext);
+export default function AdminGallery() {
+  const { gallery, addGallery, deleteGallery, updateGallery } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [form, setForm] = useState({ image: '', title: '', titleRu: '' });
@@ -22,24 +22,23 @@ export default function AdminCarousel() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.image) { toast.error('Rasm kiritilmadi'); return; }
-    if (editingItem) { updateCarousel({ ...editingItem, ...form }); toast.success('Rasm yangilandi'); }
-    else { addCarousel({ ...form, id: Date.now() }); toast.success('Rasm qo\'shildi'); }
+    if (editingItem) { updateGallery({ ...editingItem, ...form }); toast.success('Rasm yangilandi'); }
+    else { addGallery({ ...form, id: Date.now() }); toast.success('Rasm qo\'shildi'); }
     setIsModalOpen(false); setEditingItem(null); setForm({ image: '', title: '', titleRu: '' });
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">🎠 Karusel boshqaruvi ({carousel.length})</h1>
+        <h1 className="text-2xl font-bold">🖼️ Galereya boshqaruvi ({gallery.length})</h1>
         <button onClick={() => { setEditingItem(null); setForm({ image: '', title: '', titleRu: '' }); setIsModalOpen(true); }} className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition flex items-center gap-2"><i className="fas fa-plus"></i> Yangi rasm</button>
       </div>
-      {carousel.length === 0 ? (<div className="bg-white rounded-xl p-12 text-center"><i className="fas fa-images text-6xl text-gray-300 mb-4"></i><p className="text-gray-500">Hech qanday rasm yo'q</p></div>) : (
-        <div className="space-y-3">
-          {carousel.map((item, idx) => (<motion.div key={item.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} whileHover={{ x: 5 }} className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all">
-            <div className="text-gray-400 text-lg font-bold">#{idx + 1}</div>
-            <img src={item.image} className="w-20 h-16 object-cover rounded-lg" />
-            <div className="flex-1"><h3 className="font-bold">{item.title}</h3>{item.titleRu && <p className="text-sm text-gray-500">{item.titleRu}</p>}</div>
-            <div className="flex gap-2"><button onClick={() => { setEditingItem(item); setForm({ image: item.image, title: item.title || '', titleRu: item.titleRu || '' }); setIsModalOpen(true); }} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"><i className="fas fa-edit"></i></button><button onClick={() => { if (confirm('O\'chirilsinmi?')) { deleteCarousel(item.id); toast.success('Rasm o\'chirildi'); } }} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"><i className="fas fa-trash-alt"></i></button></div>
+      {gallery.length === 0 ? (<div className="bg-white rounded-xl p-12 text-center"><i className="fas fa-images text-6xl text-gray-300 mb-4"></i><p className="text-gray-500">Hech qanday rasm yo'q</p></div>) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {gallery.map(item => (<motion.div key={item.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ y: -5 }} className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all">
+            <img src={item.image} className="w-full h-40 object-cover" />
+            <div className="p-3"><h3 className="font-bold text-sm">{item.title}</h3>{item.titleRu && <p className="text-xs text-gray-500">{item.titleRu}</p>}</div>
+            <div className="border-t p-2 flex gap-2"><button onClick={() => { setEditingItem(item); setForm({ image: item.image, title: item.title || '', titleRu: item.titleRu || '' }); setIsModalOpen(true); }} className="flex-1 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm hover:bg-blue-100 transition"><i className="fas fa-edit"></i> Tahrirlash</button><button onClick={() => { if (confirm('O\'chirilsinmi?')) { deleteGallery(item.id); toast.success('Rasm o\'chirildi'); } }} className="flex-1 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm hover:bg-red-100 transition"><i className="fas fa-trash-alt"></i> O'chirish</button></div>
           </motion.div>))}
         </div>
       )}
