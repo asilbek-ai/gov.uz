@@ -108,7 +108,8 @@ export default function Admin() {
     { id: 'faq', label: 'FAQ', icon: 'question-circle', color: 'purple' },
     { id: 'reception', label: 'Qabul jadvali', icon: 'calendar-alt', color: 'yellow' },
     { id: 'contacts', label: 'Murojaatlar', icon: 'envelope', color: 'red' },
-    { id: 'subscribers', label: 'Obunalar', icon: 'bell', color: 'blue' }
+    { id: 'subscribers', label: 'Obunalar', icon: 'bell', color: 'blue' },
+    { id: 'organizations', label: 'Tashkilotlar', nameRu: 'Организации', component: AdminOrganizations }
   ];
 
   const getColorClass = (color) => {
