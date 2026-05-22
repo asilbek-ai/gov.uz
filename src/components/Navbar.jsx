@@ -62,7 +62,7 @@ export default function Navbar() {
           <div className="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-xl" onClick={e => e.stopPropagation()}>
             <div className="pt-20 p-4 flex flex-col gap-2">
               {navItems.map((item) => (<Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100">{t(item.label, item.labelRu)}</Link>))}
-              <Link to="/admin/login" onClick={() => setMobileOpen(false)} className="px-4 py-3 bg-primary text-white rounded-lg text-center">Admin panel</Link>
+              {/* <Link to="/admin/login" onClick={() => setMobileOpen(false)} className="px-4 py-3 bg-primary text-white rounded-lg text-center">Admin panel</Link> */}
             </div>
           </div>
         </div>

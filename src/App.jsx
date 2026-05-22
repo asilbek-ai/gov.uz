@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -18,7 +18,7 @@ import ScrollToTop from './components/ScrollToTop';
 
 export const AppContext = createContext();
 
-// To'liq default ma'lumotlar
+// Default data with documents array
 const defaultData = {
   news: [
     { id: 1, title: "Jondor tumanida yangi maktab ochildi", titleRu: "Новая школа открылась", content: "600 o'rinli zamonaviy maktab foydalanishga topshirildi.", date: "2025-05-20", image: "https://images.pexels.com/photos/159740/classroom-school-desk-lecture-159740.jpeg?w=800", views: 245 },
@@ -30,9 +30,7 @@ const defaultData = {
   ],
   statistics: [
     { id: 1, label: "Aholi soni", labelRu: "Численность населения", value: 128500, icon: "users", color: "blue" },
-    { id: 2, label: "Maktablar", labelRu: "Школы", value: 42, icon: "school", color: "green" },
-    { id: 3, label: "Kasalxonalar", labelRu: "Больницы", value: 3, icon: "hospital", color: "red" },
-    { id: 4, label: "Tadbirkorlar", labelRu: "Предприниматели", value: 1250, icon: "briefcase", color: "purple" }
+    { id: 2, label: "Maktablar", labelRu: "Школы", value: 42, icon: "school", color: "green" }
   ],
   organizations: [
     { id: 1, name: "Jondor tuman hokimligi", nameRu: "Хокимият Джондорского района", phone: "+998 65 380-00-00", email: "info@jondor.uz", address: "Jondor shahri" }
@@ -43,13 +41,9 @@ const defaultData = {
   carousel: [
     { id: 1, image: "https://images.pexels.com/photos/154801/pexels-photo-154801.jpeg?w=1600", title: "Jondor tumaniga xush kelibsiz", titleRu: "Добро пожаловать в Джондорский район" }
   ],
-  leadership: [
-    { id: 1, name: "Karimov Alisher Baxtiyorovich", position: "Tuman hokimi", positionRu: "Хоким района", image: "", phone: "+998 65 380-00-00", email: "hokim@jondor.uz" }
-  ],
-  faqs: [
-    { id: 1, question: "Hujjatlarni qayerda topshirish mumkin?", questionRu: "Где можно сдать документы?", answer: "Jondor tumani xalq qabulxonasida", answerRu: "В народной приемной Джондорского района" }
-  ],
-  documents: [],
+  leadership: [],
+  documents: [],  // MUHIM: documents arrayi bo'sh
+  faqs: [],
   contacts: [],
   subscribers: [],
   receptionHours: {
@@ -64,19 +58,27 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminData, setAdminData] = useState(defaultData);
 
+  // Load data from localStorage on startup
   useEffect(() => {
-    const saved = localStorage.getItem('jondor_data');
+    const saved = localStorage.getItem('jondor_portal_data');
     if (saved) {
-      setAdminData(JSON.parse(saved));
+      try {
+        const parsed = JSON.parse(saved);
+        setAdminData(parsed);
+      } catch (e) {
+        console.error('Error loading data:', e);
+        localStorage.setItem('jondor_portal_data', JSON.stringify(defaultData));
+      }
     } else {
-      localStorage.setItem('jondor_data', JSON.stringify(defaultData));
+      localStorage.setItem('jondor_portal_data', JSON.stringify(defaultData));
     }
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
+  // Save to localStorage whenever data changes
   const updateData = (newData) => {
     setAdminData(newData);
-    localStorage.setItem('jondor_data', JSON.stringify(newData));
+    localStorage.setItem('jondor_portal_data', JSON.stringify(newData));
   };
 
   const login = async (username, password) => {
@@ -104,20 +106,18 @@ function App() {
   const deleteCarousel = (id) => updateData({ ...adminData, carousel: adminData.carousel.filter(c => c.id !== id) });
   const addLeadership = (item) => updateData({ ...adminData, leadership: [...adminData.leadership, item] });
   const deleteLeadership = (id) => updateData({ ...adminData, leadership: adminData.leadership.filter(l => l.id !== id) });
-  const addFaq = (item) => updateData({ ...adminData, faqs: [...adminData.faqs, item] });
-  const deleteFaq = (id) => updateData({ ...adminData, faqs: adminData.faqs.filter(f => f.id !== id) });
   const addDocument = (item) => updateData({ ...adminData, documents: [...adminData.documents, item] });
   const deleteDocument = (id) => updateData({ ...adminData, documents: adminData.documents.filter(d => d.id !== id) });
+  const addFaq = (item) => updateData({ ...adminData, faqs: [...adminData.faqs, item] });
+  const deleteFaq = (id) => updateData({ ...adminData, faqs: adminData.faqs.filter(f => f.id !== id) });
   const submitContact = (data) => {
     const newContact = { ...data, id: Date.now(), date: new Date().toISOString().split('T')[0] };
     updateData({ ...adminData, contacts: [newContact, ...adminData.contacts] });
     return true;
   };
   const subscribe = (email) => {
-    const exists = adminData.subscribers.find(s => s.email === email);
-    if (exists) return true;
-    const newSub = { id: Date.now(), email, date: new Date().toISOString().split('T')[0] };
-    updateData({ ...adminData, subscribers: [...adminData.subscribers, newSub] });
+    if (adminData.subscribers.find(s => s.email === email)) return true;
+    updateData({ ...adminData, subscribers: [...adminData.subscribers, { id: Date.now(), email, date: new Date().toISOString().split('T')[0] }] });
     return true;
   };
   const updateReceptionHours = (data) => updateData({ ...adminData, receptionHours: data });

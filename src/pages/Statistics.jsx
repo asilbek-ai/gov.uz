@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
+import AnimatedStatistics from '../components/AnimatedStatistics';
 import { AppContext } from '../App';
 import CountUp from 'react-countup';
 
@@ -74,6 +75,10 @@ export default function Statistics() {
           </div>
         </div>
       </div>
+
+        <div>
+      <AnimatedStatistics />
+    </div>
     </div>
   );
 }

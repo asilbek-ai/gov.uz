@@ -4,32 +4,11 @@ import { FiPlus, FiTrash2, FiEdit2, FiUser, FiPhone, FiMail } from 'react-icons/
 import toast from 'react-hot-toast';
 
 export default function AdminLeadership() {
-  const { t, leadership, deleteLeadership, addLeadership } = useContext(AppContext);
-  const [localLeaders, setLocalLeaders] = useState([]);
+  const { leadership, addLeadership, deleteLeadership, updateData, adminData } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLeader, setEditingLeader] = useState(null);
   const [form, setForm] = useState({ name: '', position: '', positionRu: '', phone: '', email: '', image: '' });
   const [imagePreview, setImagePreview] = useState(null);
-
-  useEffect(() => {
-    if (leadership && leadership.length > 0) {
-      setLocalLeaders(leadership);
-    } else {
-      const saved = localStorage.getItem('jondor_data');
-      if (saved) {
-        const data = JSON.parse(saved);
-        setLocalLeaders(data.leadership || []);
-      }
-    }
-  }, [leadership]);
-
-  const saveToLocalStorage = (updatedLeaders) => {
-    const saved = localStorage.getItem('jondor_data');
-    const data = saved ? JSON.parse(saved) : { leadership: [] };
-    data.leadership = updatedLeaders;
-    localStorage.setItem('jondor_data', JSON.stringify(data));
-    setLocalLeaders(updatedLeaders);
-  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -51,16 +30,21 @@ export default function AdminLeadership() {
       toast.error('Ism familiya kiritilmadi');
       return;
     }
+    
     if (editingLeader) {
-      const updated = localLeaders.map(l => l.id === editingLeader.id ? { ...l, ...form } : l);
-      saveToLocalStorage(updated);
+      // Update existing leader
+      const updatedLeaders = adminData.leadership.map(l => 
+        l.id === editingLeader.id ? { ...l, ...form } : l
+      );
+      updateData({ ...adminData, leadership: updatedLeaders });
       toast.success('Rahbar yangilandi');
     } else {
+      // Add new leader
       const newLeader = { ...form, id: Date.now() };
-      saveToLocalStorage([...localLeaders, newLeader]);
-      if (addLeadership) addLeadership(newLeader);
+      addLeadership(newLeader);
       toast.success('Rahbar qo\'shildi');
     }
+    
     setIsModalOpen(false);
     setEditingLeader(null);
     setForm({ name: '', position: '', positionRu: '', phone: '', email: '', image: '' });
@@ -68,13 +52,27 @@ export default function AdminLeadership() {
   };
 
   const handleDelete = (id) => {
-    if (confirm('O\'chirilsinmi?')) {
-      const updated = localLeaders.filter(l => l.id !== id);
-      saveToLocalStorage(updated);
-      if (deleteLeadership) deleteLeadership(id);
+    if (window.confirm('O\'chirilsinmi?')) {
+      deleteLeadership(id);
       toast.success('Rahbar o\'chirildi');
     }
   };
+
+  const handleEdit = (leader) => {
+    setEditingLeader(leader);
+    setForm({
+      name: leader.name,
+      position: leader.position || '',
+      positionRu: leader.positionRu || '',
+      phone: leader.phone || '',
+      email: leader.email || '',
+      image: leader.image || ''
+    });
+    setImagePreview(leader.image || null);
+    setIsModalOpen(true);
+  };
+
+  const displayLeaders = adminData?.leadership || [];
 
   return (
     <div className="p-6">
@@ -86,7 +84,7 @@ export default function AdminLeadership() {
         </button>
       </div>
 
-      {localLeaders.length === 0 ? (
+      {displayLeaders.length === 0 ? (
         <div className="bg-white rounded-xl p-12 text-center">
           <i className="fas fa-users text-6xl text-gray-300 mb-4"></i>
           <p className="text-gray-500">Hech qanday rahbar yo'q</p>
@@ -96,7 +94,7 @@ export default function AdminLeadership() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {localLeaders.map(leader => (
+          {displayLeaders.map(leader => (
             <div key={leader.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition">
               <div className="h-40 overflow-hidden bg-gradient-to-r from-primary/10 to-primary/5 flex items-center justify-center">
                 {leader.image ? <img src={leader.image} className="w-full h-full object-cover" alt={leader.name} /> : <FiUser className="text-5xl text-primary/40" />}
@@ -110,7 +108,7 @@ export default function AdminLeadership() {
                   {leader.email && <p><FiMail className="inline mr-2" /> {leader.email}</p>}
                 </div>
                 <div className="flex gap-2 mt-4 pt-3 border-t">
-                  <button onClick={() => { setEditingLeader(leader); setForm(leader); setImagePreview(leader.image || null); setIsModalOpen(true); }} className="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100">
+                  <button onClick={() => handleEdit(leader)} className="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100">
                     <FiEdit2 className="inline mr-1" /> Tahrirlash
                   </button>
                   <button onClick={() => handleDelete(leader.id)} className="flex-1 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">

@@ -4,32 +4,11 @@ import { FiPlus, FiTrash2, FiEdit2, FiChevronDown, FiChevronUp } from 'react-ico
 import toast from 'react-hot-toast';
 
 export default function AdminFaq() {
-  const { t, faqs, deleteFaq, addFaq } = useContext(AppContext);
-  const [localFaqs, setLocalFaqs] = useState([]);
+  const { faqs, addFaq, deleteFaq, updateData, adminData } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [form, setForm] = useState({ question: '', questionRu: '', answer: '', answerRu: '' });
-
-  useEffect(() => {
-    if (faqs && faqs.length > 0) {
-      setLocalFaqs(faqs);
-    } else {
-      const saved = localStorage.getItem('jondor_data');
-      if (saved) {
-        const data = JSON.parse(saved);
-        setLocalFaqs(data.faqs || []);
-      }
-    }
-  }, [faqs]);
-
-  const saveToLocalStorage = (updatedFaqs) => {
-    const saved = localStorage.getItem('jondor_data');
-    const data = saved ? JSON.parse(saved) : { faqs: [] };
-    data.faqs = updatedFaqs;
-    localStorage.setItem('jondor_data', JSON.stringify(data));
-    setLocalFaqs(updatedFaqs);
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,29 +16,45 @@ export default function AdminFaq() {
       toast.error('Savol kiritilmadi');
       return;
     }
+    
     if (editingFaq) {
-      const updated = localFaqs.map(f => f.id === editingFaq.id ? { ...f, ...form } : f);
-      saveToLocalStorage(updated);
+      // Update existing FAQ
+      const updatedFaqs = adminData.faqs.map(f => 
+        f.id === editingFaq.id ? { ...f, ...form } : f
+      );
+      updateData({ ...adminData, faqs: updatedFaqs });
       toast.success('FAQ yangilandi');
     } else {
+      // Add new FAQ
       const newFaq = { ...form, id: Date.now() };
-      saveToLocalStorage([...localFaqs, newFaq]);
-      if (addFaq) addFaq(newFaq);
+      addFaq(newFaq);
       toast.success('FAQ qo\'shildi');
     }
+    
     setIsModalOpen(false);
     setEditingFaq(null);
     setForm({ question: '', questionRu: '', answer: '', answerRu: '' });
   };
 
   const handleDelete = (id) => {
-    if (confirm('O\'chirilsinmi?')) {
-      const updated = localFaqs.filter(f => f.id !== id);
-      saveToLocalStorage(updated);
-      if (deleteFaq) deleteFaq(id);
+    if (window.confirm('O\'chirilsinmi?')) {
+      deleteFaq(id);
       toast.success('FAQ o\'chirildi');
     }
   };
+
+  const handleEdit = (faq) => {
+    setEditingFaq(faq);
+    setForm({
+      question: faq.question,
+      questionRu: faq.questionRu || '',
+      answer: faq.answer || '',
+      answerRu: faq.answerRu || ''
+    });
+    setIsModalOpen(true);
+  };
+
+  const displayFaqs = adminData?.faqs || [];
 
   return (
     <div className="p-6">
@@ -71,7 +66,7 @@ export default function AdminFaq() {
         </button>
       </div>
 
-      {localFaqs.length === 0 ? (
+      {displayFaqs.length === 0 ? (
         <div className="bg-white rounded-xl p-12 text-center">
           <i className="fas fa-question-circle text-6xl text-gray-300 mb-4"></i>
           <p className="text-gray-500">Hech qanday savol yo'q</p>
@@ -81,7 +76,7 @@ export default function AdminFaq() {
         </div>
       ) : (
         <div className="space-y-3">
-          {localFaqs.map(faq => (
+          {displayFaqs.map(faq => (
             <div key={faq.id} className="bg-white rounded-xl shadow-md overflow-hidden">
               <button
                 onClick={() => setExpandedId(expandedId === faq.id ? null : faq.id)}
@@ -89,7 +84,7 @@ export default function AdminFaq() {
               >
                 <span className="font-medium text-gray-800">{faq.question}</span>
                 <div className="flex items-center gap-2">
-                  <button onClick={(e) => { e.stopPropagation(); setEditingFaq(faq); setForm(faq); setIsModalOpen(true); }} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg">
+                  <button onClick={(e) => { e.stopPropagation(); handleEdit(faq); }} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg">
                     <FiEdit2 />
                   </button>
                   <button onClick={(e) => { e.stopPropagation(); handleDelete(faq.id); }} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">

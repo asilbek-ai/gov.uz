@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CountUp from 'react-countup';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules';
+import AnimatedStatistics from '../components/AnimatedStatistics';
 import { AppContext } from '../App';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -10,7 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 
 export default function Home() {
-  const { t, adminData, subscribe } = useContext(AppContext);
+  const { t, adminData, subscribe, leadership } = useContext(AppContext);
   const [countersStarted, setCountersStarted] = useState(false);
   const [subscriberEmail, setSubscriberEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -59,6 +60,9 @@ export default function Home() {
     citizens: { days: 'Har payshanba', daysRu: 'Каждый четверг', time: '10:00 - 13:00', phone: '+998 65 380-00-00', phoneRu: '+998 65 380-00-00' }
   };
 
+  // Rahbariyat ma'lumotlarini olish (adminData.leadership yoki leadership dan)
+  const leadersList = leadership || adminData?.leadership || [];
+
   return (
     <div className="overflow-x-hidden">
       {/* Hero Slider */}
@@ -103,7 +107,6 @@ export default function Home() {
             </SwiperSlide>
           ))}
         </Swiper>
-        {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
             <div className="w-1 h-2 bg-white rounded-full mt-2 animate-pulse"></div>
@@ -115,11 +118,7 @@ export default function Home() {
       <div className="container-custom -mt-12 relative z-20">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
           {quickLinks.map(link => (
-            <Link 
-              key={link.path} 
-              to={link.path} 
-              className="group bg-white rounded-xl p-3 text-center shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-            >
+            <Link key={link.path} to={link.path} className="group bg-white rounded-xl p-3 text-center shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
               <div className={`${link.bg} w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition duration-300`}>
                 <i className={`fas fa-${link.icon} ${link.text} text-xl`}></i>
               </div>
@@ -130,6 +129,11 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+
+      <div className="py-16">
+  <AnimatedStatistics />
+</div>
 
       {/* Features Section */}
       <div className="py-16 bg-white">
@@ -185,8 +189,66 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ==================== RAHBARIYAT SECTION (PUBLICGA KO'RINADI) ==================== */}
+      {leadersList && leadersList.length > 0 && (
+        <div className="py-16 bg-white">
+          <div className="container-custom">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-3">
+                {t('Tuman rahbariyati', 'Руководство района')}
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto">
+                {t('Xalq uchun xizmat qilayotgan yetakchilar', 'Лидеры, служащие народу')}
+              </p>
+              <div className="w-20 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {leadersList.slice(0, 3).map(leader => (
+                <div key={leader.id} className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="h-64 overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
+                    {leader.image ? (
+                      <img src={leader.image} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt={leader.name} />
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto">
+                          <i className="fas fa-user-tie text-4xl text-primary/50"></i>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-5 text-center">
+                    <h3 className="font-bold text-xl mb-1 group-hover:text-primary transition">{leader.name}</h3>
+                    <p className="text-primary text-sm font-medium">{leader.position}</p>
+                    {leader.positionRu && <p className="text-gray-500 text-xs mt-1">{leader.positionRu}</p>}
+                    <div className="mt-4 pt-3 border-t flex justify-center gap-4 text-sm">
+                      {leader.phone && (
+                        <a href={`tel:${leader.phone}`} className="text-gray-500 hover:text-primary transition">
+                          <i className="fas fa-phone mr-1"></i> {leader.phone}
+                        </a>
+                      )}
+                      {leader.email && (
+                        <a href={`mailto:${leader.email}`} className="text-gray-500 hover:text-primary transition">
+                          <i className="fas fa-envelope mr-1"></i> Email
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {leadersList.length > 3 && (
+              <div className="text-center mt-8">
+                <Link to="/about" className="text-primary hover:underline inline-flex items-center gap-1 group">
+                  {t('Barcha rahbarlar', 'Все руководители')} <i className="fas fa-arrow-right group-hover:translate-x-1 transition"></i>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Reception Hours Section */}
-      <div className="py-16 bg-white">
+      <div className="py-16 bg-gray-50">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-3">
@@ -229,7 +291,7 @@ export default function Home() {
       </div>
 
       {/* Latest News Section */}
-      <div className="py-16 bg-gray-50">
+      <div className="py-16 bg-white">
         <div className="container-custom">
           <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
             <div>
@@ -244,11 +306,7 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {adminData.news.slice(0, 3).map((item, idx) => (
-              <Link 
-                key={item.id} 
-                to={`/news/${item.id}`} 
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-              >
+              <Link key={item.id} to={`/news/${item.id}`} className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                 <div className="relative h-56 overflow-hidden">
                   <img src={item.image} className="w-full h-full object-cover transition duration-500 group-hover:scale-110" alt={item.title} />
                   <div className="absolute top-4 left-4 bg-primary text-white text-xs px-3 py-1 rounded-full">
@@ -274,7 +332,7 @@ export default function Home() {
       </div>
 
       {/* Services Preview Section */}
-      <div className="py-16 bg-white">
+      <div className="py-16 bg-gray-50">
         <div className="container-custom">
           <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
             <div>
@@ -344,7 +402,7 @@ export default function Home() {
       </div>
 
       {/* Partners Section */}
-      <div className="py-16 bg-gray-50">
+      <div className="py-16 bg-white">
         <div className="container-custom">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-bold gradient-text mb-2">

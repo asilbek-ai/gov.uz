@@ -163,7 +163,7 @@ export default function Header() {
               <Link to="/media" onClick={() => setMobileMenuOpen(false)} className="px-4 py-2 rounded-lg hover:bg-gray-100">Media</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="px-4 py-2 rounded-lg hover:bg-gray-100">Aloqa</Link>
               <Link to="/statistics" onClick={() => setMobileMenuOpen(false)} className="px-4 py-2 rounded-lg hover:bg-gray-100">Statistika</Link>
-              <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="px-4 py-2 text-white rounded-lg bg-primary">Admin panel</Link>
+              {/* <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="px-4 py-2 text-white rounded-lg bg-primary">Admin panel</Link> */}
             </div>
           </div>
         )}

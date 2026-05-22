@@ -1,12 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
+import AdminDocuments from './AdminDocuments';
 import AdminFaq from './AdminFaq';
 import AdminLeadership from './AdminLeadership';
 import { AppContext } from '../App';
-// Admin.jsx da importlar
-
-
-// menuItems da
-
 
 export default function Admin() {
   const { 
@@ -70,13 +66,12 @@ export default function Admin() {
     const success = await login(loginData.username, loginData.password);
     if (success) {
       setError('');
-      showMessage('Xush kelibsiz!');
+      showMessage('✨ Xush kelibsiz!');
     } else {
-      setError('Login yoki parol xato!');
+      setError('⚠️ Login yoki parol xato!');
     }
   };
 
-  // ==================== FILE UPLOAD ====================
   const handleImageUpload = (e, setForm, field) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -85,101 +80,112 @@ export default function Admin() {
       reader.onloadend = () => {
         setForm(prev => ({ ...prev, [field]: reader.result }));
         setUploading(false);
-        showMessage('Rasm yuklandi!');
+        showMessage('🖼️ Rasm yuklandi!');
       };
       reader.readAsDataURL(file);
     } else {
-      showMessage('Faqat rasm fayllari!', 'error');
+      showMessage('❌ Faqat rasm fayllari!', 'error');
     }
   };
 
-  // ==================== NEWS ====================
   const handleAddNews = () => {
-    if (!newsForm.title) { showMessage('Sarlavha kiritilmadi', 'error'); return; }
+    if (!newsForm.title) { showMessage('❌ Sarlavha kiritilmadi', 'error'); return; }
     addNews({ ...newsForm, id: Date.now(), date: new Date().toISOString().split('T')[0], views: 0 });
     setNewsForm({ title: '', titleRu: '', content: '', image: '' });
-    showMessage('Yangilik qo\'shildi!');
+    showMessage('✅ Yangilik qo\'shildi!');
   };
 
-  // ==================== SERVICES ====================
   const handleAddService = () => {
-    if (!serviceForm.name) { showMessage('Xizmat nomi kiritilmadi', 'error'); return; }
+    if (!serviceForm.name) { showMessage('❌ Xizmat nomi kiritilmadi', 'error'); return; }
     addService({ ...serviceForm, id: Date.now() });
     setServiceForm({ name: '', nameRu: '', icon: 'gear', description: '', department: '' });
-    showMessage('Xizmat qo\'shildi!');
+    showMessage('✅ Xizmat qo\'shildi!');
   };
 
-  // ==================== STATISTICS ====================
   const handleAddStatistic = () => {
-    if (!statForm.label) { showMessage('Statistika nomi kiritilmadi', 'error'); return; }
+    if (!statForm.label) { showMessage('❌ Statistika nomi kiritilmadi', 'error'); return; }
     addStatistic({ ...statForm, id: Date.now() });
     setStatForm({ label: '', labelRu: '', value: 0, icon: 'chart-line', color: 'blue' });
-    showMessage('Statistika qo\'shildi!');
+    showMessage('✅ Statistika qo\'shildi!');
   };
 
-  // ==================== ORGANIZATIONS ====================
   const handleAddOrganization = () => {
-    if (!orgForm.name) { showMessage('Tashkilot nomi kiritilmadi', 'error'); return; }
+    if (!orgForm.name) { showMessage('❌ Tashkilot nomi kiritilmadi', 'error'); return; }
     addOrganization({ ...orgForm, id: Date.now() });
     setOrgForm({ name: '', nameRu: '', phone: '', email: '', address: '' });
-    showMessage('Tashkilot qo\'shildi!');
+    showMessage('✅ Tashkilot qo\'shildi!');
   };
 
-  // ==================== GALLERY ====================
   const handleAddGallery = () => {
-    if (!galleryForm.image) { showMessage('Rasm tanlanmadi', 'error'); return; }
+    if (!galleryForm.image) { showMessage('❌ Rasm tanlanmadi', 'error'); return; }
     addGallery({ ...galleryForm, id: Date.now() });
     setGalleryForm({ image: '', title: '', titleRu: '' });
-    showMessage('Rasm qo\'shildi!');
+    showMessage('✅ Rasm qo\'shildi!');
   };
 
-  // ==================== CAROUSEL ====================
   const handleAddCarousel = () => {
-    if (!carouselForm.image) { showMessage('Rasm tanlanmadi', 'error'); return; }
+    if (!carouselForm.image) { showMessage('❌ Rasm tanlanmadi', 'error'); return; }
     addCarousel({ ...carouselForm, id: Date.now() });
     setCarouselForm({ image: '', title: '', titleRu: '' });
-    showMessage('Karusel rasmi qo\'shildi!');
+    showMessage('✅ Karusel rasmi qo\'shildi!');
   };
 
-  // ==================== LEADERSHIP ====================
   const handleAddLeadership = () => {
-    if (!leaderForm.name) { showMessage('Rahbar nomi kiritilmadi', 'error'); return; }
+    if (!leaderForm.name) { showMessage('❌ Rahbar nomi kiritilmadi', 'error'); return; }
     addLeadership({ ...leaderForm, id: Date.now() });
     setLeaderForm({ name: '', position: '', positionRu: '', image: '', phone: '', email: '' });
-    showMessage('Rahbar qo\'shildi!');
+    showMessage('✅ Rahbar qo\'shildi!');
   };
 
-  // ==================== FAQ ====================
   const handleAddFaq = () => {
-    if (!faqForm.question) { showMessage('Savol kiritilmadi', 'error'); return; }
+    if (!faqForm.question) { showMessage('❌ Savol kiritilmadi', 'error'); return; }
     addFaq({ ...faqForm, id: Date.now() });
     setFaqForm({ question: '', questionRu: '', answer: '', answerRu: '' });
-    showMessage('FAQ qo\'shildi!');
+    showMessage('✅ FAQ qo\'shildi!');
   };
 
-  // ==================== RECEPTION ====================
   const handleUpdateReception = () => {
     updateReceptionHours(receptionForm);
-    showMessage('Qabul jadvali yangilandi!');
+    showMessage('✅ Qabul jadvali yangilandi!');
   };
 
   if (!isAdmin) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-primary to-primaryDark">
-        <div className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl">
-          <div className="mb-6 text-center">
-            <div className="flex items-center justify-center w-20 h-20 mx-auto mb-4 bg-primary rounded-2xl">
-              <i className="text-3xl text-white fas fa-user-shield"></i>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#003580] to-[#001a4a] p-4">
+        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
+          <div className="text-center mb-8">
+            <div className="w-24 h-24 bg-gradient-to-br from-[#003580] to-[#0066cc] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
+              <i className="fas fa-landmark text-white text-4xl"></i>
             </div>
-            <h2 className="text-2xl font-bold">Admin Panel</h2>
-            <p className="text-sm text-gray-500">Tizimga kirish</p>
+            <h2 className="text-2xl font-bold text-gray-800">Admin Panel</h2>
+            <p className="text-gray-500 text-sm mt-1">Jondor tumani boshqaruvi</p>
           </div>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input type="text" placeholder="Login" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:border-primary" value={loginData.username} onChange={(e) => setLoginData({ ...loginData, username: e.target.value })} />
-            <input type="password" placeholder="Parol" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:border-primary" value={loginData.password} onChange={(e) => setLoginData({ ...loginData, password: e.target.value })} />
-            {error && <p className="text-sm text-center text-red-500">{error}</p>}
-            <button type="submit" className="w-full py-3 font-bold text-white transition bg-primary rounded-xl hover:bg-primary/90">Kirish</button>
-            <p className="text-xs text-center text-gray-400">Demo: admin / admin123</p>
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div className="relative">
+              <i className="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input 
+                type="text" 
+                placeholder="Login" 
+                className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#003580] focus:ring-2 focus:ring-[#003580]/20 transition"
+                value={loginData.username} 
+                onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
+              />
+            </div>
+            <div className="relative">
+              <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input 
+                type="password" 
+                placeholder="Parol" 
+                className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#003580] focus:ring-2 focus:ring-[#003580]/20 transition"
+                value={loginData.password} 
+                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+              />
+            </div>
+            {error && <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl flex items-center gap-2"><i className="fas fa-exclamation-circle"></i> {error}</div>}
+            <button type="submit" className="w-full py-3 bg-gradient-to-r from-[#003580] to-[#0066cc] text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+              <i className="fas fa-sign-in-alt mr-2"></i> Kirish
+            </button>
+            <p className="text-center text-gray-400 text-xs">Demo: admin / admin123</p>
           </form>
         </div>
       </div>
@@ -187,128 +193,279 @@ export default function Admin() {
   }
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'chart-line', color: 'blue' },
-    { id: 'news', label: 'Yangiliklar', icon: 'newspaper', color: 'green' },
-    { id: 'services', label: 'Xizmatlar', icon: 'th-large', color: 'purple' },
-    { id: 'statistics', label: 'Statistika', icon: 'chart-bar', color: 'orange' },
-    { id: 'organizations', label: 'Tashkilotlar', icon: 'building', color: 'red' },
-    { id: 'gallery', label: 'Galereya', icon: 'images', color: 'pink' },
-    { id: 'carousel', label: 'Karusel', icon: 'sliders-h', color: 'indigo' },
-    { id: 'reception', label: 'Qabul jadvali', icon: 'calendar-alt', color: 'yellow' },
-    { id: 'leadership', label: 'Rahbariyat', icon: 'users', color: 'teal' },
-    { id: 'faq', label: 'FAQ', icon: 'question-circle', color: 'purple' },
-    { id: 'contacts', label: 'Murojaatlar', icon: 'envelope', color: 'red' },
-    { id: 'subscribers', label: 'Obunalar', icon: 'bell', color: 'blue' }
+    { id: 'dashboard', label: 'Dashboard', icon: 'chart-line', color: 'blue', bg: 'bg-blue-50', text: 'text-blue-600' },
+    { id: 'news', label: 'Yangiliklar', icon: 'newspaper', color: 'green', bg: 'bg-green-50', text: 'text-green-600' },
+    { id: 'services', label: 'Xizmatlar', icon: 'th-large', color: 'purple', bg: 'bg-purple-50', text: 'text-purple-600' },
+    { id: 'statistics', label: 'Statistika', icon: 'chart-bar', color: 'orange', bg: 'bg-orange-50', text: 'text-orange-600' },
+    { id: 'organizations', label: 'Tashkilotlar', icon: 'building', color: 'red', bg: 'bg-red-50', text: 'text-red-600' },
+    { id: 'documents', label: 'Hujjatlar', icon: 'file-alt', color: 'blue', bg: 'bg-blue-50', text: 'text-blue-600' },
+    { id: 'gallery', label: 'Galereya', icon: 'images', color: 'pink', bg: 'bg-pink-50', text: 'text-pink-600' },
+    { id: 'carousel', label: 'Karusel', icon: 'sliders-h', color: 'indigo', bg: 'bg-indigo-50', text: 'text-indigo-600' },
+    { id: 'reception', label: 'Qabul jadvali', icon: 'calendar-alt', color: 'yellow', bg: 'bg-yellow-50', text: 'text-yellow-600' },
+    { id: 'leadership', label: 'Rahbariyat', icon: 'users', color: 'teal', bg: 'bg-teal-50', text: 'text-teal-600' },
+    { id: 'faq', label: 'FAQ', icon: 'question-circle', color: 'purple', bg: 'bg-purple-50', text: 'text-purple-600' },
+    { id: 'contacts', label: 'Murojaatlar', icon: 'envelope', color: 'red', bg: 'bg-red-50', text: 'text-red-600' },
+    { id: 'subscribers', label: 'Obunalar', icon: 'bell', color: 'blue', bg: 'bg-blue-50', text: 'text-blue-600' }
   ];
-
-  const getColorClass = (color) => {
-    const colors = { blue: 'bg-blue-500', green: 'bg-green-500', purple: 'bg-purple-500', orange: 'bg-orange-500', red: 'bg-red-500', pink: 'bg-pink-500', indigo: 'bg-indigo-500', teal: 'bg-teal-500', yellow: 'bg-yellow-500' };
-    return colors[color] || 'bg-primary';
-  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
+      {/* Toast Message */}
       {message && (
-        <div className={`fixed top-20 right-4 z-50 p-4 rounded-xl shadow-lg ${message.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'} animate-fadeInUp`}>
+        <div className={`fixed top-24 right-4 z-50 px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 animate-slideInRight ${
+          message.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`}>
+          <i className={`fas fa-${message.type === 'success' ? 'check-circle' : 'exclamation-circle'}`}></i>
           {message.text}
         </div>
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-xl transition-transform duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between px-4 py-4 border-b bg-primary">
-          <div className="flex items-center gap-2"><i className="text-xl text-white fas fa-landmark"></i><span className="text-sm font-bold text-white">Admin Panel</span></div>
-          <button onClick={() => setSidebarOpen(false)} className="text-white md:hidden"><i className="fas fa-times"></i></button>
+      <div className={`fixed inset-y-0 left-0 z-30 w-72 bg-white shadow-2xl transition-all duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        {/* Sidebar Header */}
+        <div className="bg-gradient-to-r from-[#003580] to-[#0066cc] p-5">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <i className="fas fa-landmark text-white text-2xl"></i>
+            </div>
+            <div>
+              <h1 className="text-white font-bold text-lg">Admin Panel</h1>
+              <p className="text-white/70 text-xs">Jondor tumani</p>
+            </div>
+          </div>
+          <button onClick={() => setSidebarOpen(false)} className="absolute top-5 right-4 text-white/70 hover:text-white md:hidden">
+            <i className="fas fa-times text-xl"></i>
+          </button>
         </div>
-        <div className="py-4 overflow-y-auto h-[calc(100%-60px)]">
+
+        {/* Admin Info */}
+        <div className="p-5 border-b bg-gray-50">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#003580] to-[#0066cc] rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
+              A
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800">Admin User</p>
+              <p className="text-xs text-gray-500">Super Administrator</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Menu Items */}
+        <div className="py-4 px-3 overflow-y-auto h-[calc(100%-200px)]">
           {menuItems.map(item => (
-            <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 ${activeTab === item.id ? 'bg-primary/10 text-primary border-r-4 border-primary' : 'text-gray-600 hover:bg-gray-100'}`}>
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${getColorClass(item.color)} bg-opacity-20`}>
-                <i className={`fas fa-${item.icon} text-sm ${activeTab === item.id ? 'text-primary' : `text-${item.color}-500`}`}></i>
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1.5 transition-all duration-200 ${
+                activeTab === item.id 
+                  ? `${item.bg} ${item.text} shadow-md` 
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${activeTab === item.id ? item.bg : 'bg-gray-100'}`}>
+                <i className={`fas fa-${item.icon} text-sm ${activeTab === item.id ? item.text : 'text-gray-500'}`}></i>
               </div>
-              <span className="text-sm font-medium">{item.label}</span>
-              {item.id === 'contacts' && contacts.length > 0 && <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">{contacts.length}</span>}
-              {item.id === 'subscribers' && subscribers.length > 0 && <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-blue-500 rounded-full">{subscribers.length}</span>}
+              <span className="text-sm font-medium flex-1 text-left">{item.label}</span>
+              {item.id === 'contacts' && contacts.length > 0 && (
+                <span className="px-2 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">{contacts.length}</span>
+              )}
+              {item.id === 'subscribers' && subscribers.length > 0 && (
+                <span className="px-2 py-0.5 text-xs font-bold text-white bg-blue-500 rounded-full">{subscribers.length}</span>
+              )}
             </button>
           ))}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
-          <button onClick={logout} className="flex items-center w-full gap-3 px-4 py-2 text-sm font-medium text-white transition bg-red-500 rounded-lg hover:bg-red-600"><i className="fas fa-sign-out-alt"></i> Chiqish</button>
+
+        {/* Sidebar Footer */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-gray-50">
+          <button
+            onClick={logout}
+            className="flex items-center justify-center w-full gap-2 px-4 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-200 font-medium"
+          >
+            <i className="fas fa-sign-out-alt"></i>
+            <span>Chiqish</span>
+          </button>
         </div>
       </div>
 
+      {/* Overlay for mobile */}
       {sidebarOpen && <div className="fixed inset-0 z-20 bg-black/50 md:hidden" onClick={() => setSidebarOpen(false)} />}
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'ml-0'}`}>
-        <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-white shadow-sm">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-gray-100"><i className="text-xl fas fa-bars text-primary"></i></button>
-          <div className="flex items-center gap-3"><div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary"><i className="text-sm text-white fas fa-user"></i></div><span className="text-sm font-medium">Admin</span></div>
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'md:ml-72' : 'ml-0'}`}>
+        {/* Top Header */}
+        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white shadow-sm border-b">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-gray-100 transition">
+            <i className="text-xl fas fa-bars text-[#003580]"></i>
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full">
+              <i className="fas fa-calendar-alt text-[#003580] text-sm"></i>
+              <span className="text-sm text-gray-600">{new Date().toLocaleDateString('uz-UZ')}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-gradient-to-br from-[#003580] to-[#0066cc] rounded-full flex items-center justify-center text-white shadow-md">
+                <i className="fas fa-user text-sm"></i>
+              </div>
+              <span className="text-sm font-medium text-gray-700 hidden sm:inline">Admin</span>
+            </div>
+          </div>
         </div>
 
-        <div className="p-4">
+        {/* Content Area */}
+        <div className="p-6">
           {/* DASHBOARD */}
           {activeTab === 'dashboard' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Dashboard</h1>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div className="p-4 bg-white shadow rounded-xl"><div className="flex justify-between"><div><div className="text-2xl font-bold text-primary">{news.length}</div><div className="text-sm text-gray-500">Yangiliklar</div></div><i className="text-3xl text-blue-500 fas fa-newspaper"></i></div></div>
-                <div className="p-4 bg-white shadow rounded-xl"><div className="flex justify-between"><div><div className="text-2xl font-bold text-primary">{services.length}</div><div className="text-sm text-gray-500">Xizmatlar</div></div><i className="text-3xl text-purple-500 fas fa-th-large"></i></div></div>
-                <div className="p-4 bg-white shadow rounded-xl"><div className="flex justify-between"><div><div className="text-2xl font-bold text-primary">{organizations.length}</div><div className="text-sm text-gray-500">Tashkilotlar</div></div><i className="text-3xl text-green-500 fas fa-building"></i></div></div>
-                <div className="p-4 bg-white shadow rounded-xl"><div className="flex justify-between"><div><div className="text-2xl font-bold text-primary">{subscribers.length}</div><div className="text-sm text-gray-500">Obunalar</div></div><i className="text-3xl text-orange-500 fas fa-bell"></i></div></div>
+            <div className="animate-fadeIn">
+              <h1 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <i className="fas fa-chart-line text-[#003580]"></i> Dashboard
+              </h1>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-3xl font-bold text-[#003580]">{news.length}</div>
+                      <div className="text-sm text-gray-500 mt-1">Yangiliklar</div>
+                    </div>
+                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                      <i className="fas fa-newspaper text-blue-600 text-xl"></i>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-3xl font-bold text-[#003580]">{services.length}</div>
+                      <div className="text-sm text-gray-500 mt-1">Xizmatlar</div>
+                    </div>
+                    <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <i className="fas fa-th-large text-purple-600 text-xl"></i>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-3xl font-bold text-[#003580]">{organizations.length}</div>
+                      <div className="text-sm text-gray-500 mt-1">Tashkilotlar</div>
+                    </div>
+                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                      <i className="fas fa-building text-green-600 text-xl"></i>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-3xl font-bold text-[#003580]">{subscribers.length}</div>
+                      <div className="text-sm text-gray-500 mt-1">Obunalar</div>
+                    </div>
+                    <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                      <i className="fas fa-bell text-orange-600 text-xl"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="mt-6"><h2 className="mb-4 text-lg font-bold">So'nggi murojaatlar</h2><div className="overflow-hidden bg-white shadow rounded-xl">{contacts.slice(0, 5).map(contact => (<div key={contact.id} className="p-4 border-b hover:bg-gray-50"><div className="flex justify-between"><div><div className="font-medium">{contact.name}</div><div className="text-sm text-gray-500">{contact.email}</div></div><div className="text-xs text-gray-400">{contact.date}</div></div><p className="mt-1 text-sm text-gray-600">{contact.message?.slice(0, 100)}...</p></div>))}{contacts.length === 0 && <p className="p-4 text-center text-gray-500">Hech qanday murojaat yo'q</p>}</div></div>
+              <div className="mt-8">
+                <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                  <i className="fas fa-envelope text-[#003580]"></i> So'nggi murojaatlar
+                </h2>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  {contacts.slice(0, 5).map(contact => (
+                    <div key={contact.id} className="p-4 border-b hover:bg-gray-50 transition">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-medium text-gray-800">{contact.name}</div>
+                          <div className="text-sm text-gray-500">{contact.email}</div>
+                        </div>
+                        <div className="text-xs text-gray-400">{contact.date}</div>
+                      </div>
+                      <p className="mt-2 text-sm text-gray-600">{contact.message?.slice(0, 100)}...</p>
+                    </div>
+                  ))}
+                  {contacts.length === 0 && <div className="p-8 text-center text-gray-500">Hech qanday murojaat yo'q</div>}
+                </div>
+              </div>
             </div>
           )}
 
           {/* NEWS TAB */}
           {activeTab === 'news' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Yangiliklar boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold"><i className="text-green-500 fas fa-plus-circle"></i> Yangilik qo'shish</h3>
-                  <div className="space-y-3">
-                    <input type="text" placeholder="Sarlavha (UZ)" className="w-full px-3 py-2 border rounded-lg" value={newsForm.title} onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })} />
-                    <input type="text" placeholder="Sarlavha (RU)" className="w-full px-3 py-2 border rounded-lg" value={newsForm.titleRu} onChange={(e) => setNewsForm({ ...newsForm, titleRu: e.target.value })} />
-                    <textarea placeholder="Matn" rows="4" className="w-full px-3 py-2 border rounded-lg" value={newsForm.content} onChange={(e) => setNewsForm({ ...newsForm, content: e.target.value })}></textarea>
+            <div className="animate-fadeIn">
+              <h1 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <i className="fas fa-newspaper text-green-600"></i> Yangiliklar boshqaruvi
+              </h1>
+              <div className="grid lg:grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><i className="fas fa-plus-circle text-green-500"></i> Yangilik qo'shish</h3>
+                  <div className="space-y-4">
+                    <input type="text" placeholder="Sarlavha (UZ)" className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:border-[#003580]" value={newsForm.title} onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })} />
+                    <input type="text" placeholder="Sarlavha (RU)" className="w-full px-4 py-2.5 border rounded-lg" value={newsForm.titleRu} onChange={(e) => setNewsForm({ ...newsForm, titleRu: e.target.value })} />
+                    <textarea placeholder="Matn" rows="4" className="w-full px-4 py-2.5 border rounded-lg" value={newsForm.content} onChange={(e) => setNewsForm({ ...newsForm, content: e.target.value })}></textarea>
                     <div className="border-2 border-dashed rounded-lg p-4 text-center">
-                      {newsForm.image ? (<div className="relative"><img src={newsForm.image} className="h-32 mx-auto rounded-lg object-cover" /><button onClick={() => setNewsForm({ ...newsForm, image: '' })} className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6">×</button></div>) : (<label className="cursor-pointer block"><i className="text-3xl text-gray-400 fas fa-cloud-upload-alt"></i><p className="text-sm text-gray-500">Rasm yuklash</p><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setNewsForm, 'image')} /></label>)}
-                      {uploading && <div className="mt-2 h-1 bg-gray-200 rounded overflow-hidden"><div className="h-full bg-primary animate-pulse"></div></div>}
+                      {newsForm.image ? (
+                        <div className="relative inline-block">
+                          <img src={newsForm.image} className="h-28 rounded-lg object-cover" />
+                          <button onClick={() => setNewsForm({ ...newsForm, image: '' })} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6">×</button>
+                        </div>
+                      ) : (
+                        <label className="cursor-pointer block">
+                          <i className="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                          <p className="text-sm text-gray-500">Rasm yuklash</p>
+                          <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setNewsForm, 'image')} />
+                        </label>
+                      )}
                     </div>
-                    <button onClick={handleAddNews} className="w-full py-2 font-semibold text-white rounded-lg bg-primary hover:bg-primary/90">Qo'shish</button>
+                    <button onClick={handleAddNews} className="w-full py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold hover:shadow-lg transition">Qo'shish</button>
                   </div>
                 </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold"><i className="fas fa-list text-primary"></i> Yangiliklar ({news.length})</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-96">
-                    {news.map(item => (<div key={item.id} className="flex justify-between items-center p-3 border-b rounded-lg hover:bg-gray-50"><div><div className="font-medium">{item.title}</div><div className="text-xs text-gray-500">{item.date}</div></div><button onClick={() => deleteNews(item.id)} className="p-2 text-red-500"><i className="fas fa-trash"></i></button></div>))}
-                    {news.length === 0 && <p className="py-8 text-center text-gray-500">Hech qanday yangilik yo'q</p>}
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><i className="fas fa-list text-green-600"></i> Yangiliklar ({news.length})</h3>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                    {news.map(item => (
+                      <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <div className="font-medium">{item.title}</div>
+                          <div className="text-xs text-gray-500">{item.date}</div>
+                        </div>
+                        <button onClick={() => deleteNews(item.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i className="fas fa-trash"></i></button>
+                      </div>
+                    ))}
+                    {news.length === 0 && <div className="text-center py-8 text-gray-500">Hech qanday yangilik yo'q</div>}
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* SERVICES TAB */}
+          {/* DOCUMENTS TAB */}
+          {activeTab === 'documents' && <AdminDocuments />}
+
+          {/* FAQ TAB */}
+          {activeTab === 'faq' && <AdminFaq />}
+
+          {/* LEADERSHIP TAB */}
+          {activeTab === 'leadership' && <AdminLeadership />}
+
+          {/* SERVICES TAB - Quick version */}
           {activeTab === 'services' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Xizmatlar boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Xizmat qo'shish</h3>
-                  <div className="space-y-3">
-                    <input type="text" placeholder="Nomi (UZ)" className="w-full px-3 py-2 border rounded-lg" value={serviceForm.name} onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })} />
-                    <input type="text" placeholder="Nomi (RU)" className="w-full px-3 py-2 border rounded-lg" value={serviceForm.nameRu} onChange={(e) => setServiceForm({ ...serviceForm, nameRu: e.target.value })} />
-                    <input type="text" placeholder="Icon" className="w-full px-3 py-2 border rounded-lg" value={serviceForm.icon} onChange={(e) => setServiceForm({ ...serviceForm, icon: e.target.value })} />
-                    <textarea placeholder="Tavsif" rows="3" className="w-full px-3 py-2 border rounded-lg" value={serviceForm.description} onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}></textarea>
-                    <input type="text" placeholder="Departament" className="w-full px-3 py-2 border rounded-lg" value={serviceForm.department} onChange={(e) => setServiceForm({ ...serviceForm, department: e.target.value })} />
-                    <button onClick={handleAddService} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
-                  </div>
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Xizmatlar boshqaruvi</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <input type="text" placeholder="Nomi (UZ)" className="w-full p-2 border rounded" value={serviceForm.name} onChange={e => setServiceForm({...serviceForm, name: e.target.value})} />
+                  <input type="text" placeholder="Icon" className="w-full p-2 border rounded" value={serviceForm.icon} onChange={e => setServiceForm({...serviceForm, icon: e.target.value})} />
+                  <textarea placeholder="Tavsif" rows="3" className="w-full p-2 border rounded" value={serviceForm.description} onChange={e => setServiceForm({...serviceForm, description: e.target.value})} />
+                  <button onClick={handleAddService} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
                 </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Xizmatlar ({services.length})</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-96">{services.map(item => (<div key={item.id} className="flex justify-between items-center p-3 border-b"><div><div className="font-medium">{item.name}</div><div className="text-xs text-gray-500">{item.department}</div></div><button onClick={() => deleteService(item.id)} className="text-red-500"><i className="fas fa-trash"></i></button></div>))}</div>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {services.map(s => (
+                    <div key={s.id} className="flex justify-between items-center p-2 border-b">
+                      <span>{s.name}</span>
+                      <button onClick={() => deleteService(s.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -316,23 +473,24 @@ export default function Admin() {
 
           {/* STATISTICS TAB */}
           {activeTab === 'statistics' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Statistika boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Statistika qo'shish</h3>
-                  <div className="space-y-3">
-                    <input type="text" placeholder="Nomi (UZ)" className="w-full px-3 py-2 border rounded-lg" value={statForm.label} onChange={(e) => setStatForm({ ...statForm, label: e.target.value })} />
-                    <input type="text" placeholder="Nomi (RU)" className="w-full px-3 py-2 border rounded-lg" value={statForm.labelRu} onChange={(e) => setStatForm({ ...statForm, labelRu: e.target.value })} />
-                    <input type="number" placeholder="Qiymat" className="w-full px-3 py-2 border rounded-lg" value={statForm.value} onChange={(e) => setStatForm({ ...statForm, value: parseInt(e.target.value) })} />
-                    <input type="text" placeholder="Icon" className="w-full px-3 py-2 border rounded-lg" value={statForm.icon} onChange={(e) => setStatForm({ ...statForm, icon: e.target.value })} />
-                    <select className="w-full px-3 py-2 border rounded-lg" value={statForm.color} onChange={(e) => setStatForm({ ...statForm, color: e.target.value })}><option value="blue">Blue</option><option value="green">Green</option><option value="red">Red</option><option value="purple">Purple</option><option value="orange">Orange</option></select>
-                    <button onClick={handleAddStatistic} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
-                  </div>
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Statistika boshqaruvi</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <input type="text" placeholder="Nomi (UZ)" className="w-full p-2 border rounded" value={statForm.label} onChange={e => setStatForm({...statForm, label: e.target.value})} />
+                  <input type="number" placeholder="Qiymat" className="w-full p-2 border rounded" value={statForm.value} onChange={e => setStatForm({...statForm, value: parseInt(e.target.value)})} />
+                  <select className="w-full p-2 border rounded" value={statForm.color} onChange={e => setStatForm({...statForm, color: e.target.value})}>
+                    <option value="blue">Blue</option><option value="green">Green</option><option value="red">Red</option><option value="purple">Purple</option>
+                  </select>
+                  <button onClick={handleAddStatistic} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
                 </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Statistikalar ({statistics.length})</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-96">{statistics.map(item => (<div key={item.id} className="flex justify-between items-center p-3 border-b"><div><div className="font-medium">{item.label}</div><div className="text-sm text-gray-500">{item.value.toLocaleString()}</div></div><button onClick={() => deleteStatistic(item.id)} className="text-red-500"><i className="fas fa-trash"></i></button></div>))}</div>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {statistics.map(s => (
+                    <div key={s.id} className="flex justify-between items-center p-2 border-b">
+                      <span>{s.label}: {s.value}</span>
+                      <button onClick={() => deleteStatistic(s.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -340,23 +498,21 @@ export default function Admin() {
 
           {/* ORGANIZATIONS TAB */}
           {activeTab === 'organizations' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Tashkilotlar boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Tashkilot qo'shish</h3>
-                  <div className="space-y-3">
-                    <input type="text" placeholder="Nomi (UZ)" className="w-full px-3 py-2 border rounded-lg" value={orgForm.name} onChange={(e) => setOrgForm({ ...orgForm, name: e.target.value })} />
-                    <input type="text" placeholder="Nomi (RU)" className="w-full px-3 py-2 border rounded-lg" value={orgForm.nameRu} onChange={(e) => setOrgForm({ ...orgForm, nameRu: e.target.value })} />
-                    <input type="text" placeholder="Telefon" className="w-full px-3 py-2 border rounded-lg" value={orgForm.phone} onChange={(e) => setOrgForm({ ...orgForm, phone: e.target.value })} />
-                    <input type="email" placeholder="Email" className="w-full px-3 py-2 border rounded-lg" value={orgForm.email} onChange={(e) => setOrgForm({ ...orgForm, email: e.target.value })} />
-                    <input type="text" placeholder="Manzil" className="w-full px-3 py-2 border rounded-lg" value={orgForm.address} onChange={(e) => setOrgForm({ ...orgForm, address: e.target.value })} />
-                    <button onClick={handleAddOrganization} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
-                  </div>
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Tashkilotlar boshqaruvi</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <input type="text" placeholder="Nomi (UZ)" className="w-full p-2 border rounded" value={orgForm.name} onChange={e => setOrgForm({...orgForm, name: e.target.value})} />
+                  <input type="text" placeholder="Telefon" className="w-full p-2 border rounded" value={orgForm.phone} onChange={e => setOrgForm({...orgForm, phone: e.target.value})} />
+                  <button onClick={handleAddOrganization} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
                 </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Tashkilotlar ({organizations.length})</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-96">{organizations.map(item => (<div key={item.id} className="flex justify-between items-center p-3 border-b"><div><div className="font-medium">{item.name}</div><div className="text-xs text-gray-500">{item.phone}</div></div><button onClick={() => deleteOrganization(item.id)} className="text-red-500"><i className="fas fa-trash"></i></button></div>))}</div>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {organizations.map(o => (
+                    <div key={o.id} className="flex justify-between items-center p-2 border-b">
+                      <span>{o.name}</span>
+                      <button onClick={() => deleteOrganization(o.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -364,26 +520,31 @@ export default function Admin() {
 
           {/* GALLERY TAB */}
           {activeTab === 'gallery' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Galereya boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Rasm qo'shish</h3>
-                  <div className="space-y-3">
-                    <div className="border-2 border-dashed rounded-lg p-4 text-center">
-                      {galleryForm.image ? (<div className="relative"><img src={galleryForm.image} className="h-32 mx-auto rounded-lg object-cover" /><button onClick={() => setGalleryForm({ ...galleryForm, image: '' })} className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6">×</button></div>) : (<label className="cursor-pointer block"><i className="text-3xl text-gray-400 fas fa-cloud-upload-alt"></i><p className="text-sm text-gray-500">Rasm yuklash</p><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setGalleryForm, 'image')} /></label>)}
-                    </div>
-                    <input type="text" placeholder="Sarlavha (UZ)" className="w-full px-3 py-2 border rounded-lg" value={galleryForm.title} onChange={(e) => setGalleryForm({ ...galleryForm, title: e.target.value })} />
-                    <input type="text" placeholder="Sarlavha (RU)" className="w-full px-3 py-2 border rounded-lg" value={galleryForm.titleRu} onChange={(e) => setGalleryForm({ ...galleryForm, titleRu: e.target.value })} />
-                    <button onClick={handleAddGallery} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Galereya boshqaruvi</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="border-2 border-dashed p-4 text-center">
+                    {galleryForm.image ? (
+                      <img src={galleryForm.image} className="h-24 mx-auto rounded" />
+                    ) : (
+                      <label className="cursor-pointer block">
+                        <i className="fas fa-cloud-upload-alt text-2xl text-gray-400"></i>
+                        <p className="text-sm">Rasm yuklash</p>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setGalleryForm, 'image')} />
+                      </label>
+                    )}
                   </div>
+                  <input type="text" placeholder="Sarlavha" className="w-full p-2 border rounded" value={galleryForm.title} onChange={e => setGalleryForm({...galleryForm, title: e.target.value})} />
+                  <button onClick={handleAddGallery} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
                 </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Galereya ({gallery.length})</h3>
-                  <div className="grid grid-cols-2 gap-3 overflow-y-auto max-h-96">
-                    {gallery.map(item => (<div key={item.id} className="relative group"><img src={item.image} className="w-full h-24 object-cover rounded-lg" /><button onClick={() => deleteGallery(item.id)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i className="text-xs fas fa-trash"></i></button></div>))}
-                    {gallery.length === 0 && <p className="col-span-2 py-8 text-center text-gray-500">Hech qanday rasm yo'q</p>}
-                  </div>
+                <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                  {gallery.map(g => (
+                    <div key={g.id} className="relative group">
+                      <img src={g.image} className="w-full h-24 object-cover rounded" />
+                      <button onClick={() => deleteGallery(g.id)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 opacity-0 group-hover:opacity-100"><i className="fas fa-trash text-xs"></i></button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -391,117 +552,91 @@ export default function Admin() {
 
           {/* CAROUSEL TAB */}
           {activeTab === 'carousel' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Karusel boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Rasm qo'shish</h3>
-                  <div className="space-y-3">
-                    <div className="border-2 border-dashed rounded-lg p-4 text-center">
-                      {carouselForm.image ? (<div className="relative"><img src={carouselForm.image} className="h-32 mx-auto rounded-lg object-cover" /><button onClick={() => setCarouselForm({ ...carouselForm, image: '' })} className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6">×</button></div>) : (<label className="cursor-pointer block"><i className="text-3xl text-gray-400 fas fa-cloud-upload-alt"></i><p className="text-sm text-gray-500">Rasm yuklash</p><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setCarouselForm, 'image')} /></label>)}
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Karusel boshqaruvi</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="border-2 border-dashed p-4 text-center">
+                    {carouselForm.image ? <img src={carouselForm.image} className="h-24 mx-auto rounded" /> : <label className="cursor-pointer block"><i className="fas fa-cloud-upload-alt text-2xl text-gray-400"></i><p className="text-sm">Rasm yuklash</p><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setCarouselForm, 'image')} /></label>}
+                  </div>
+                  <input type="text" placeholder="Sarlavha" className="w-full p-2 border rounded" value={carouselForm.title} onChange={e => setCarouselForm({...carouselForm, title: e.target.value})} />
+                  <button onClick={handleAddCarousel} className="w-full p-2 bg-primary text-white rounded">Qo'shish</button>
+                </div>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {carousel.map(c => (
+                    <div key={c.id} className="flex items-center gap-3 p-2 border rounded">
+                      <img src={c.image} className="w-12 h-10 object-cover rounded" />
+                      <span className="flex-1 text-sm">{c.title}</span>
+                      <button onClick={() => deleteCarousel(c.id)} className="text-red-500"><i className="fas fa-trash"></i></button>
                     </div>
-                    <input type="text" placeholder="Sarlavha (UZ)" className="w-full px-3 py-2 border rounded-lg" value={carouselForm.title} onChange={(e) => setCarouselForm({ ...carouselForm, title: e.target.value })} />
-                    <input type="text" placeholder="Sarlavha (RU)" className="w-full px-3 py-2 border rounded-lg" value={carouselForm.titleRu} onChange={(e) => setCarouselForm({ ...carouselForm, titleRu: e.target.value })} />
-                    <button onClick={handleAddCarousel} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
-                  </div>
-                </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Karusel rasmlari ({carousel.length})</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-96">{carousel.map(item => (<div key={item.id} className="flex items-center gap-3 p-2 border rounded-lg"><img src={item.image} className="w-16 h-12 object-cover rounded" /><div className="flex-1"><div className="font-medium">{item.title}</div></div><button onClick={() => deleteCarousel(item.id)} className="text-red-500"><i className="fas fa-trash"></i></button></div>))}</div>
+                  ))}
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* LEADERSHIP TAB */}
-          {activeTab === 'leadership' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Rahbariyat boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Rahbar qo'shish</h3>
-                  <div className="space-y-3">
-                    <input type="text" placeholder="Ism familiya" className="w-full px-3 py-2 border rounded-lg" value={leaderForm.name} onChange={(e) => setLeaderForm({ ...leaderForm, name: e.target.value })} />
-                    <input type="text" placeholder="Lavozimi (UZ)" className="w-full px-3 py-2 border rounded-lg" value={leaderForm.position} onChange={(e) => setLeaderForm({ ...leaderForm, position: e.target.value })} />
-                    <input type="text" placeholder="Lavozimi (RU)" className="w-full px-3 py-2 border rounded-lg" value={leaderForm.positionRu} onChange={(e) => setLeaderForm({ ...leaderForm, positionRu: e.target.value })} />
-                    <div className="border-2 border-dashed rounded-lg p-4 text-center">
-                      {leaderForm.image ? (<div className="relative"><img src={leaderForm.image} className="h-24 w-24 mx-auto rounded-full object-cover" /><button onClick={() => setLeaderForm({ ...leaderForm, image: '' })} className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6">×</button></div>) : (<label className="cursor-pointer block"><i className="text-3xl text-gray-400 fas fa-cloud-upload-alt"></i><p className="text-sm text-gray-500">Rasm yuklash</p><input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setLeaderForm, 'image')} /></label>)}
-                    </div>
-                    <input type="text" placeholder="Telefon" className="w-full px-3 py-2 border rounded-lg" value={leaderForm.phone} onChange={(e) => setLeaderForm({ ...leaderForm, phone: e.target.value })} />
-                    <input type="email" placeholder="Email" className="w-full px-3 py-2 border rounded-lg" value={leaderForm.email} onChange={(e) => setLeaderForm({ ...leaderForm, email: e.target.value })} />
-                    <button onClick={handleAddLeadership} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
-                  </div>
-                </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Rahbariyat ({leadership.length})</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-96">{leadership.map(item => (<div key={item.id} className="flex justify-between items-center p-3 border-b"><div><div className="font-medium">{item.name}</div><div className="text-xs text-gray-500">{item.position}</div></div><button onClick={() => deleteLeadership(item.id)} className="text-red-500"><i className="fas fa-trash"></i></button></div>))}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* FAQ TAB */}
-          {activeTab === 'faq' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">FAQ boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">Savol qo'shish</h3>
-                  <div className="space-y-3">
-                    <input type="text" placeholder="Savol (UZ)" className="w-full px-3 py-2 border rounded-lg" value={faqForm.question} onChange={(e) => setFaqForm({ ...faqForm, question: e.target.value })} />
-                    <input type="text" placeholder="Savol (RU)" className="w-full px-3 py-2 border rounded-lg" value={faqForm.questionRu} onChange={(e) => setFaqForm({ ...faqForm, questionRu: e.target.value })} />
-                    <textarea placeholder="Javob (UZ)" rows="3" className="w-full px-3 py-2 border rounded-lg" value={faqForm.answer} onChange={(e) => setFaqForm({ ...faqForm, answer: e.target.value })}></textarea>
-                    <textarea placeholder="Javob (RU)" rows="3" className="w-full px-3 py-2 border rounded-lg" value={faqForm.answerRu} onChange={(e) => setFaqForm({ ...faqForm, answerRu: e.target.value })}></textarea>
-                    <button onClick={handleAddFaq} className="w-full py-2 font-semibold text-white rounded-lg bg-primary">Qo'shish</button>
-                  </div>
-                </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="mb-4 text-lg font-bold">FAQ ({faqs.length})</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-96">{faqs.map(item => (<div key={item.id} className="flex justify-between items-center p-3 border-b"><div><div className="font-medium">❓ {item.question}</div><div className="text-xs text-gray-500">💡 {item.answer?.slice(0, 50)}</div></div><button onClick={() => deleteFaq(item.id)} className="text-red-500"><i className="fas fa-trash"></i></button></div>))}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CONTACTS TAB */}
-          {activeTab === 'contacts' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Murojaatlar</h1>
-              <div className="overflow-hidden bg-white shadow rounded-xl"><div className="divide-y">{contacts.length === 0 ? <p className="py-8 text-center text-gray-500">Hech qanday murojaat yo'q</p> : contacts.map(contact => (<div key={contact.id} className="p-4 hover:bg-gray-50"><div className="flex justify-between mb-2"><div><div className="font-bold">{contact.name}</div><div className="text-sm text-gray-500">{contact.email} {contact.phone && `| ${contact.phone}`}</div></div><div className="text-xs text-gray-400">{contact.date}</div></div><p className="text-gray-700">{contact.message}</p></div>))}</div></div>
-            </div>
-          )}
-
-          {/* SUBSCRIBERS TAB */}
-          {activeTab === 'subscribers' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Obunalar</h1>
-              <div className="overflow-hidden bg-white shadow rounded-xl"><div className="divide-y">{subscribers.length === 0 ? <p className="py-8 text-center text-gray-500">Hech qanday obuna yo'q</p> : subscribers.map(sub => (<div key={sub.id} className="flex justify-between items-center p-4 hover:bg-gray-50"><div><div className="font-medium">{sub.email}</div><div className="text-xs text-gray-500">{sub.date}</div></div><i className="text-green-500 fas fa-check-circle"></i></div>))}</div></div>
             </div>
           )}
 
           {/* RECEPTION TAB */}
           {activeTab === 'reception' && (
-            <div>
-              <h1 className="mb-6 text-2xl font-bold">Qabul jadvali boshqaruvi</h1>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold"><i className="text-blue-500 fas fa-user-tie"></i> Tuman hokimi qabuli</h3>
-                  <div className="space-y-4"><div><label className="block mb-1 text-sm font-medium">Kunlar (UZ)</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.days} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, days: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Kunlar (RU)</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.daysRu} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, daysRu: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Vaqt</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.time} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, time: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Manzil (UZ)</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.location} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, location: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Manzil (RU)</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.governor.locationRu} onChange={(e) => setReceptionForm({ ...receptionForm, governor: { ...receptionForm.governor, locationRu: e.target.value } })} /></div></div>
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Qabul jadvali boshqaruvi</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h3 className="font-bold mb-3"><i className="fas fa-user-tie text-blue-600 mr-2"></i> Tuman hokimi</h3>
+                  <div className="space-y-2">
+                    <input type="text" placeholder="Kunlar (UZ)" className="w-full p-2 border rounded" value={receptionForm.governor.days} onChange={e => setReceptionForm({...receptionForm, governor: {...receptionForm.governor, days: e.target.value}})} />
+                    <input type="text" placeholder="Vaqt" className="w-full p-2 border rounded" value={receptionForm.governor.time} onChange={e => setReceptionForm({...receptionForm, governor: {...receptionForm.governor, time: e.target.value}})} />
+                    <input type="text" placeholder="Manzil" className="w-full p-2 border rounded" value={receptionForm.governor.location} onChange={e => setReceptionForm({...receptionForm, governor: {...receptionForm.governor, location: e.target.value}})} />
+                  </div>
                 </div>
-                <div className="p-5 bg-white shadow rounded-xl">
-                  <h3 className="flex items-center gap-2 mb-4 text-lg font-bold"><i className="text-green-500 fas fa-users"></i> Fuqarolar qabuli</h3>
-                  <div className="space-y-4"><div><label className="block mb-1 text-sm font-medium">Kunlar (UZ)</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.days} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, days: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Kunlar (RU)</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.daysRu} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, daysRu: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Vaqt</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.time} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, time: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Telefon</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.phone} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, phone: e.target.value } })} /></div>
-                  <div><label className="block mb-1 text-sm font-medium">Telefon (RU)</label><input type="text" className="w-full px-3 py-2 border rounded-lg" value={receptionForm.citizens.phoneRu} onChange={(e) => setReceptionForm({ ...receptionForm, citizens: { ...receptionForm.citizens, phoneRu: e.target.value } })} /></div></div>
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h3 className="font-bold mb-3"><i className="fas fa-users text-green-600 mr-2"></i> Fuqarolar qabuli</h3>
+                  <div className="space-y-2">
+                    <input type="text" placeholder="Kunlar (UZ)" className="w-full p-2 border rounded" value={receptionForm.citizens.days} onChange={e => setReceptionForm({...receptionForm, citizens: {...receptionForm.citizens, days: e.target.value}})} />
+                    <input type="text" placeholder="Vaqt" className="w-full p-2 border rounded" value={receptionForm.citizens.time} onChange={e => setReceptionForm({...receptionForm, citizens: {...receptionForm.citizens, time: e.target.value}})} />
+                    <input type="text" placeholder="Telefon" className="w-full p-2 border rounded" value={receptionForm.citizens.phone} onChange={e => setReceptionForm({...receptionForm, citizens: {...receptionForm.citizens, phone: e.target.value}})} />
+                  </div>
                 </div>
               </div>
-              <div className="mt-6"><button onClick={handleUpdateReception} className="px-6 py-3 font-semibold text-white transition rounded-lg bg-primary hover:bg-primary/90"><i className="mr-2 fas fa-save"></i> Qabul jadvalini saqlash</button></div>
+              <button onClick={handleUpdateReception} className="mt-6 px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition"><i className="fas fa-save mr-2"></i> Saqlash</button>
+            </div>
+          )}
+
+          {/* CONTACTS TAB */}
+          {activeTab === 'contacts' && (
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Murojaatlar</h2>
+              {contacts.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">Hech qanday murojaat yo'q</div>
+              ) : (
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {contacts.map(c => (
+                    <div key={c.id} className="p-3 bg-gray-50 rounded-lg">
+                      <div className="font-bold">{c.name}</div>
+                      <div className="text-sm text-gray-500">{c.email}</div>
+                      <p className="text-sm mt-1">{c.message}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* SUBSCRIBERS TAB */}
+          {activeTab === 'subscribers' && (
+            <div className="bg-white rounded-xl p-6">
+              <h2 className="text-xl font-bold mb-4">Obunalar</h2>
+              {subscribers.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">Hech qanday obuna yo'q</div>
+              ) : (
+                <div className="space-y-2">
+                  {subscribers.map(s => (
+                    <div key={s.id} className="flex justify-between items-center p-2 border-b">
+                      <span>{s.email}</span>
+                      <span className="text-xs text-gray-400">{s.date}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
