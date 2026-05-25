@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AppContext } from '../App';
 import { motion } from 'framer-motion';
 import AddModal from '../components/AddModal';
@@ -9,36 +9,66 @@ export default function AdminCarousel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [form, setForm] = useState({ image: '', title: '', titleRu: '' });
+  const [carouselList, setCarouselList] = useState([]);
 
-  const carouselList = adminData?.carousel || [];
+  // Ma'lumotlar o'zgarganda yangilash
+  useEffect(() => {
+    if (adminData?.carousel && Array.isArray(adminData.carousel)) {
+      setCarouselList(adminData.carousel);
+    } else {
+      setCarouselList([]);
+    }
+  }, [adminData]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
+      // Rasm hajmini cheklash (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Rasm hajmi 2MB dan kichik bo\'lishi kerak');
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => setForm({ ...form, image: reader.result });
       reader.readAsDataURL(file);
+    } else {
+      toast.error('Faqat rasm fayli tanlang');
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     if (!form.image) { 
       toast.error('Rasm kiritilmadi'); 
       return; 
     }
     
+    const newItem = {
+      id: editingItem ? editingItem.id : Date.now(),
+      image: form.image,
+      title: form.title || '',
+      titleRu: form.titleRu || ''
+    };
+    
     if (editingItem) { 
-      updateCarousel({ ...editingItem, ...form }); 
+      updateCarousel(newItem); 
       toast.success('Rasm yangilandi'); 
     } else { 
-      addCarousel(form); 
+      addCarousel(newItem); 
       toast.success('Rasm qo\'shildi'); 
     }
     
     setIsModalOpen(false); 
     setEditingItem(null); 
     setForm({ image: '', title: '', titleRu: '' });
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Ushbu rasmni o\'chirmoqchimisiz?')) {
+      deleteCarousel(id);
+      toast.success('Rasm o\'chirildi');
+    }
   };
 
   return (
@@ -51,7 +81,7 @@ export default function AdminCarousel() {
             setForm({ image: '', title: '', titleRu: '' }); 
             setIsModalOpen(true); 
           }} 
-          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition flex items-center gap-2"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
         >
           <i className="fas fa-plus"></i> Yangi rasm
         </button>
@@ -63,53 +93,58 @@ export default function AdminCarousel() {
           <p className="text-gray-500">Hech qanday rasm yo'q</p>
           <button 
             onClick={() => setIsModalOpen(true)} 
-            className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             + Birinchi rasm qo'shish
           </button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {carouselList.map((item, idx) => (
             <motion.div 
               key={item.id} 
-              initial={{ opacity: 0, x: -20 }} 
-              animate={{ opacity: 1, x: 0 }} 
-              whileHover={{ x: 5 }} 
-              className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all"
+              initial={{ opacity: 0, scale: 0.9 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              whileHover={{ y: -5 }} 
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all"
             >
-              <div className="text-gray-400 text-lg font-bold">#{idx + 1}</div>
-              <img 
-                src={item.image} 
-                className="w-20 h-16 object-cover rounded-lg" 
-                alt={item.title} 
-                onError={(e) => { e.target.src = 'https://via.placeholder.com/80x60?text=No+Image'; }}
-              />
-              <div className="flex-1">
-                <h3 className="font-bold">{item.title || 'Sarlavha yo\'q'}</h3>
+              <div className="relative h-40 bg-gray-100">
+                <img 
+                  src={item.image} 
+                  className="w-full h-full object-cover" 
+                  alt={item.title || 'Carousel image'} 
+                  onError={(e) => { 
+                    e.target.src = 'https://via.placeholder.com/400x200?text=Rasm+topilmadi';
+                  }}
+                />
+                <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                  #{idx + 1}
+                </div>
+              </div>
+              <div className="p-3">
+                <h3 className="font-bold text-gray-800">{item.title || 'Sarlavha yo\'q'}</h3>
                 {item.titleRu && <p className="text-sm text-gray-500">{item.titleRu}</p>}
               </div>
-              <div className="flex gap-2">
+              <div className="border-t p-3 flex gap-2">
                 <button 
                   onClick={() => { 
                     setEditingItem(item); 
-                    setForm({ image: item.image, title: item.title || '', titleRu: item.titleRu || '' }); 
+                    setForm({ 
+                      image: item.image, 
+                      title: item.title || '', 
+                      titleRu: item.titleRu || '' 
+                    }); 
                     setIsModalOpen(true); 
                   }} 
-                  className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+                  className="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm"
                 >
-                  <i className="fas fa-edit"></i>
+                  <i className="fas fa-edit mr-1"></i> Tahrirlash
                 </button>
                 <button 
-                  onClick={() => { 
-                    if (window.confirm('O\'chirilsinmi?')) { 
-                      deleteCarousel(item.id); 
-                      toast.success('Rasm o\'chirildi'); 
-                    } 
-                  }} 
-                  className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
+                  onClick={() => handleDelete(item.id)} 
+                  className="flex-1 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition text-sm"
                 >
-                  <i className="fas fa-trash-alt"></i>
+                  <i className="fas fa-trash-alt mr-1"></i> O'chirish
                 </button>
               </div>
             </motion.div>
@@ -130,14 +165,14 @@ export default function AdminCarousel() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Rasm *</label>
-            <div className="border-2 border-dashed border-gray-300 p-4 text-center rounded-lg hover:border-primary transition">
+            <div className="border-2 border-dashed border-gray-300 p-4 text-center rounded-lg hover:border-blue-500 transition">
               {form.image ? (
-                <div className="relative">
-                  <img src={form.image} className="h-32 mx-auto rounded" alt="preview" />
+                <div className="relative inline-block">
+                  <img src={form.image} className="h-32 w-auto mx-auto rounded object-cover" alt="preview" />
                   <button 
                     type="button"
                     onClick={() => setForm({ ...form, image: '' })}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 text-xs"
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center hover:bg-red-600"
                   >
                     ✕
                   </button>
@@ -146,6 +181,7 @@ export default function AdminCarousel() {
                 <label className="cursor-pointer block">
                   <i className="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
                   <p className="text-sm text-gray-500">Rasm yuklash uchun bosing</p>
+                  <p className="text-xs text-gray-400">JPG, PNG (max 2MB)</p>
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                 </label>
               )}
@@ -155,18 +191,20 @@ export default function AdminCarousel() {
             <label className="block text-sm font-medium mb-1">Sarlavha (UZ)</label>
             <input 
               type="text" 
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
               value={form.title} 
               onChange={e => setForm({...form, title: e.target.value})} 
+              placeholder="Masalan: Jondor tumani manzarasi"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Sarlavha (RU)</label>
             <input 
               type="text" 
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
               value={form.titleRu} 
               onChange={e => setForm({...form, titleRu: e.target.value})} 
+              placeholder="Например: Вид Джондорского района"
             />
           </div>
         </div>
