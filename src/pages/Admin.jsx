@@ -87,7 +87,6 @@ export default function Admin() {
             <button type="submit" className="w-full py-3 bg-gradient-to-r from-[#003580] to-[#0066cc] text-white font-bold rounded-xl hover:shadow-lg transition">
               <i className="mr-2 fas fa-sign-in-alt"></i> Kirish
             </button>
-            <p className="text-xs text-center text-gray-400">Demo: admin / admin123</p>
           </form>
         </div>
       </div>

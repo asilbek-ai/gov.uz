@@ -23,19 +23,18 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-primaryDark p-4">
-      <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
-        <div className="text-center mb-6">
-          <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4"><i className="fas fa-user-shield text-white text-3xl"></i></div>
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-primary to-primaryDark">
+      <div className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl">
+        <div className="mb-6 text-center">
+          <div className="flex items-center justify-center w-20 h-20 mx-auto mb-4 bg-primary rounded-2xl"><i className="text-3xl text-white fas fa-user-shield"></i></div>
           <h2 className="text-2xl font-bold">Admin Panel</h2>
-          <p className="text-gray-500 text-sm">Tizimga kirish</p>
+          <p className="text-sm text-gray-500">Tizimga kirish</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input type="text" placeholder="Login" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:border-primary" value={username} onChange={(e) => setUsername(e.target.value)} />
           <input type="password" placeholder="Parol" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:border-primary" value={password} onChange={(e) => setPassword(e.target.value)} />
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-          <button type="submit" className="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition">Kirish</button>
-          <p className="text-center text-gray-400 text-xs">Demo: admin / admin123</p>
+          {error && <p className="text-sm text-center text-red-500">{error}</p>}
+          <button type="submit" className="w-full py-3 font-bold text-white transition bg-primary rounded-xl hover:bg-primary/90">Kirish</button>
         </form>
       </div>
     </div>
