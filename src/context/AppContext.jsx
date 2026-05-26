@@ -31,11 +31,12 @@ export const AppProvider = ({ children }) => {
 
     // News
     const savedNews = localStorage.getItem('jondor_news');
-    if (savedNews) setNews(JSON.parse(savedNews));
-    else {
+    if (savedNews) {
+      try { setNews(JSON.parse(savedNews)); } catch(e) { console.error('News parse error:', e); }
+    } else {
       const defaultNews = [
-        { id: 1, title: 'Jondor tumanida yangi loyiha', titleRu: 'Новый проект в Джондорском районе', content: 'Lorem ipsum...', date: '2025-01-15', views: 120, image: 'https://picsum.photos/id/1015/800/500' },
-        { id: 2, title: 'Tuman hokimi fuqarolar bilan uchrashdi', titleRu: 'Хоким района встретился с гражданами', content: 'Lorem ipsum...', date: '2025-01-20', views: 85, image: 'https://picsum.photos/id/104/800/500' }
+        { id: 1, title: 'Jondor tumanida yangi loyiha', titleRu: 'Новый проект в Джондорском районе', content: 'Jondor tumanida yangi loyiha ishga tushirildi...', date: '2025-01-15', views: 120, image: 'https://picsum.photos/id/1015/800/500' },
+        { id: 2, title: 'Tuman hokimi fuqarolar bilan uchrashdi', titleRu: 'Хоким района встретился с гражданами', content: 'Tuman hokimi fuqarolar bilan navbatdagi uchrashuv o\'tkazdi...', date: '2025-01-20', views: 85, image: 'https://picsum.photos/id/104/800/500' }
       ];
       setNews(defaultNews);
       localStorage.setItem('jondor_news', JSON.stringify(defaultNews));
@@ -43,8 +44,9 @@ export const AppProvider = ({ children }) => {
 
     // Services
     const savedServices = localStorage.getItem('jondor_services');
-    if (savedServices) setServices(JSON.parse(savedServices));
-    else {
+    if (savedServices) {
+      try { setServices(JSON.parse(savedServices)); } catch(e) { console.error('Services parse error:', e); }
+    } else {
       const defaultServices = [
         { id: 1, name: 'Hujjat rasmiylashtirish', nameRu: 'Оформление документов', description: 'Passport, ID card va boshqa hujjatlar', department: 'Markaziy davlat xizmatlari', icon: 'file-alt' }
       ];
@@ -54,8 +56,9 @@ export const AppProvider = ({ children }) => {
 
     // Statistics
     const savedStats = localStorage.getItem('jondor_statistics');
-    if (savedStats) setStatistics(JSON.parse(savedStats));
-    else {
+    if (savedStats) {
+      try { setStatistics(JSON.parse(savedStats)); } catch(e) { console.error('Statistics parse error:', e); }
+    } else {
       const defaultStats = [
         { id: 1, label: 'Aholi soni', labelRu: 'Численность населения', value: 154700, prefix: '', suffix: '+', icon: 'users', color: 'blue' },
         { id: 2, label: 'Maktablar', labelRu: 'Школы', value: 45, prefix: '', suffix: '', icon: 'school', color: 'green' },
@@ -68,8 +71,9 @@ export const AppProvider = ({ children }) => {
 
     // Organizations
     const savedOrgs = localStorage.getItem('jondor_organizations');
-    if (savedOrgs) setOrganizations(JSON.parse(savedOrgs));
-    else {
+    if (savedOrgs) {
+      try { setOrganizations(JSON.parse(savedOrgs)); } catch(e) { console.error('Organizations parse error:', e); }
+    } else {
       const defaultOrgs = [
         { id: 1, name: 'Jondor tuman hokimligi', nameRu: 'Хокимият Джондорского района', phone: '+998 65 380-00-00', email: 'info@jondor.uz', address: 'Jondor shahri', icon: 'building' }
       ];
@@ -79,12 +83,17 @@ export const AppProvider = ({ children }) => {
 
     // Gallery
     const savedGallery = localStorage.getItem('jondor_gallery');
-    if (savedGallery) setGallery(JSON.parse(savedGallery));
+    if (savedGallery) {
+      try { setGallery(JSON.parse(savedGallery)); } catch(e) { console.error('Gallery parse error:', e); }
+    } else {
+      setGallery([]);
+    }
 
     // Carousel
     const savedCarousel = localStorage.getItem('jondor_carousel');
-    if (savedCarousel) setCarousel(JSON.parse(savedCarousel));
-    else {
+    if (savedCarousel) {
+      try { setCarousel(JSON.parse(savedCarousel)); } catch(e) { console.error('Carousel parse error:', e); }
+    } else {
       const defaultCarousel = [
         { id: 1, image: 'https://picsum.photos/id/1015/1920/600', title: 'Jondor tumaniga xush kelibsiz', titleRu: 'Добро пожаловать в Джондорский район' },
         { id: 2, image: 'https://picsum.photos/id/104/1920/600', title: 'Taraqqiyot sari', titleRu: 'К развитию' }
@@ -95,8 +104,9 @@ export const AppProvider = ({ children }) => {
 
     // Leadership
     const savedLeadership = localStorage.getItem('jondor_leadership');
-    if (savedLeadership) setLeadership(JSON.parse(savedLeadership));
-    else {
+    if (savedLeadership) {
+      try { setLeadership(JSON.parse(savedLeadership)); } catch(e) { console.error('Leadership parse error:', e); }
+    } else {
       const defaultLeadership = [
         { id: 1, name: 'Alijon Alijonov', nameRu: 'Алижон Алижонов', position: 'Tuman hokimi', positionRu: 'Хоким района', phone: '+998 65 380-00-01', email: 'hokim@jondor.uz', image: 'https://randomuser.me/api/portraits/men/1.jpg' },
         { id: 2, name: 'Dilbar Karimova', nameRu: 'Дилбар Каримова', position: 'Hokim oʻrinbosari', positionRu: 'Заместитель хокима', phone: '+998 65 380-00-02', email: 'd.karimova@jondor.uz', image: 'https://randomuser.me/api/portraits/women/2.jpg' }
@@ -105,13 +115,40 @@ export const AppProvider = ({ children }) => {
       localStorage.setItem('jondor_leadership', JSON.stringify(defaultLeadership));
     }
 
-    // Documents
+    // ============ DOCUMENTS (TUZATILGAN) ============
     const savedDocuments = localStorage.getItem('jondor_documents');
-    if (savedDocuments) setDocuments(JSON.parse(savedDocuments));
-    else {
+    if (savedDocuments && savedDocuments !== 'undefined') {
+      try {
+        const parsed = JSON.parse(savedDocuments);
+        setDocuments(Array.isArray(parsed) ? parsed : []);
+      } catch(e) {
+        console.error('Documents parse error:', e);
+        setDocuments([]);
+      }
+    } else {
       const defaultDocuments = [
-        { id: 1, title: 'Tuman budjeti 2025', titleRu: 'Бюджет района 2025', category: 'budget', date: '2025-01-15', views: 45 },
-        { id: 2, title: 'Rivojlanish dasturi 2025-2030', titleRu: 'Программа развития 2025-2030', category: 'programs', date: '2025-02-01', views: 32 }
+        { 
+          id: 1, 
+          name: 'Jondor tumani budjeti 2025', 
+          nameRu: 'Бюджет Джондорского района 2025', 
+          description: '2025-yil uchun tuman budjeti haqida batafsil ma\'lumot',
+          category: 'hisobot', 
+          date: new Date().toISOString().split('T')[0], 
+          downloadCount: 0, 
+          fileSize: '2.5 MB', 
+          fileUrl: '' 
+        },
+        { 
+          id: 2, 
+          name: 'Rivojlanish dasturi 2025-2030', 
+          nameRu: 'Программа развития 2025-2030', 
+          description: 'Tuman rivojlanish dasturi',
+          category: 'qaror', 
+          date: new Date().toISOString().split('T')[0], 
+          downloadCount: 0, 
+          fileSize: '3.1 MB', 
+          fileUrl: '' 
+        }
       ];
       setDocuments(defaultDocuments);
       localStorage.setItem('jondor_documents', JSON.stringify(defaultDocuments));
@@ -119,8 +156,9 @@ export const AppProvider = ({ children }) => {
 
     // Faqs
     const savedFaqs = localStorage.getItem('jondor_faqs');
-    if (savedFaqs) setFaqs(JSON.parse(savedFaqs));
-    else {
+    if (savedFaqs) {
+      try { setFaqs(JSON.parse(savedFaqs)); } catch(e) { console.error('Faqs parse error:', e); }
+    } else {
       const defaultFaqs = [
         { id: 1, question: 'Pasport qanday olinadi?', questionRu: 'Как получить паспорт?', answer: 'Pasport olish uchun...' }
       ];
@@ -130,15 +168,25 @@ export const AppProvider = ({ children }) => {
 
     // Contacts
     const savedContacts = localStorage.getItem('jondor_contacts');
-    if (savedContacts) setContacts(JSON.parse(savedContacts));
+    if (savedContacts) {
+      try { setContacts(JSON.parse(savedContacts)); } catch(e) { console.error('Contacts parse error:', e); }
+    } else {
+      setContacts([]);
+    }
 
     // Subscribers
     const savedSubscribers = localStorage.getItem('jondor_subscribers');
-    if (savedSubscribers) setSubscribers(JSON.parse(savedSubscribers));
+    if (savedSubscribers) {
+      try { setSubscribers(JSON.parse(savedSubscribers)); } catch(e) { console.error('Subscribers parse error:', e); }
+    } else {
+      setSubscribers([]);
+    }
 
     // Reception Hours
     const savedReception = localStorage.getItem('jondor_reception');
-    if (savedReception) setReceptionHours(JSON.parse(savedReception));
+    if (savedReception) {
+      try { setReceptionHours(JSON.parse(savedReception)); } catch(e) { console.error('Reception parse error:', e); }
+    }
   }, []);
 
   // ============ ADMIN LOGIN ============
@@ -270,21 +318,33 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('jondor_leadership', JSON.stringify(updated));
   };
 
-  // ============ DOCUMENTS FUNCTIONS ============
+  // ============ DOCUMENTS FUNCTIONS (TUZATILGAN) ============
   const addDocument = (item) => {
-    const updated = [...documents, { ...item, id: Date.now(), views: 0, date: new Date().toLocaleDateString() }];
+    const newDoc = { 
+      ...item, 
+      id: Date.now(), 
+      downloadCount: 0, 
+      date: new Date().toISOString().split('T')[0] 
+    };
+    const updated = [...documents, newDoc];
     setDocuments(updated);
     localStorage.setItem('jondor_documents', JSON.stringify(updated));
+    console.log('Document added:', newDoc); // Debug uchun
+    return newDoc;
   };
+  
   const deleteDocument = (id) => {
     const updated = documents.filter(item => item.id !== id);
     setDocuments(updated);
     localStorage.setItem('jondor_documents', JSON.stringify(updated));
+    console.log('Document deleted:', id); // Debug uchun
   };
+  
   const updateDocument = (updatedItem) => {
     const updated = documents.map(item => item.id === updatedItem.id ? updatedItem : item);
     setDocuments(updated);
     localStorage.setItem('jondor_documents', JSON.stringify(updated));
+    console.log('Document updated:', updatedItem); // Debug uchun
   };
 
   // ============ FAQ FUNCTIONS ============
@@ -313,11 +373,11 @@ export const AppProvider = ({ children }) => {
 
   // ============ SUBSCRIBER FUNCTIONS ============
   const addSubscriber = (email) => {
-    const subscribersList = JSON.parse(localStorage.getItem('jondor_subscribers') || '[]');
-    if (!subscribersList.includes(email)) {
-      subscribersList.push(email);
-      localStorage.setItem('jondor_subscribers', JSON.stringify(subscribersList));
-      setSubscribers(subscribersList);
+    const currentSubscribers = JSON.parse(localStorage.getItem('jondor_subscribers') || '[]');
+    if (!currentSubscribers.includes(email)) {
+      currentSubscribers.push(email);
+      localStorage.setItem('jondor_subscribers', JSON.stringify(currentSubscribers));
+      setSubscribers(currentSubscribers);
       return true;
     }
     return false;

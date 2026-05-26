@@ -35,7 +35,6 @@ export default function AdminLogin() {
           <input type="password" placeholder="Parol" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:border-primary" value={password} onChange={(e) => setPassword(e.target.value)} />
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <button type="submit" className="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition">Kirish</button>
-          <p className="text-center text-gray-400 text-xs">Demo: admin / admin123</p>
         </form>
       </div>
     </div>
