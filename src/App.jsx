@@ -16,6 +16,21 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import DashboardStatistics from './pages/DashboardStatistics';
+import MobileInfo from './pages/MobileInfo';
+import AdminTopics from './pages/AdminTopics';
+
+// OneID va boshqa tashkilotlar uchun login/register sahifalari
+import OneIDLogin from './pages/OneIDLogin';
+import OneIDRegister from './pages/OneIDRegister';
+import IDUZLogin from './pages/IDUZLogin';
+import IDUZRegister from './pages/IDUZRegister';
+import MyIDLogin from './pages/MyIDLogin';
+import MyIDRegister from './pages/MyIDRegister';
+import EImzoLogin from './pages/EImzoLogin';
+import EImzoRegister from './pages/EImzoRegister';
+import MyGovLogin from './pages/MyGovLogin';
+import MyGovRegister from './pages/MyGovRegister';
+
 export const AppContext = createContext();
 
 // Default data
@@ -48,6 +63,27 @@ const defaultData = {
   faqs: [],
   contacts: [],
   subscribers: [],
+  topics: [], // topics qo'shildi
+  mobileInfo: {
+    jondor: {
+      title: { uz: "Jondor tumani", ru: "Джондорский район", en: "Jondor District" },
+      description: { uz: "Jondor tumani - Buxoro viloyatidagi go'zal tuman. 1926-yilda tashkil topgan.", ru: "Джондорский район - красивый район Бухарской области. Основан в 1926 году.", en: "Jondor district is a beautiful district in Bukhara region. Founded in 1926." },
+      history: { uz: "Jondor tumani 1926-yilda tashkil topgan. Tuman hududida ko'plab tarixiy obidalar mavjud.", ru: "Джондорский район основан в 1926 году. На территории района находятся множество исторических памятников.", en: "Jondor district was founded in 1926. There are many historical monuments." },
+      geography: { uz: "Tuman maydoni 1.2 ming km². Buxoro viloyatining shimoli-g'arbiy qismida joylashgan.", ru: "Площадь района 1,2 тыс. км². Расположен в северо-западной части Бухарской области.", en: "The area of the district is 1.2 thousand km². Located in the northwestern part of Bukhara region." },
+      population: { uz: "Aholisi 154,700 dan ortiq kishi.", ru: "Население более 154,700 человек.", en: "Population over 154,700 people." },
+      economy: { uz: "Asosiy tarmoqlar: paxtachilik, chorvachilik, sabzavotchilik va bog'dorchilik.", ru: "Основные отрасли: хлопководство, животноводство, овощеводство и садоводство.", en: "Main industries: cotton growing, animal husbandry, vegetable growing and gardening." },
+      culture: { uz: "Chor Bakr majmuasi, Sitorai Mohi Xosa kabi tarixiy obidalar mavjud.", ru: "Имеются такие исторические памятники, как комплекс Чор-Бакр, Ситораи Мохи Хоса.", en: "There are historical monuments such as Chor-Bakr complex, Sitorai Mohi Hosa." },
+      leadership: { uz: "Tuman hokimi - Xudoyev Jamshid Rajabovich.", ru: "Хоким района - Худоев Джамшид Раджабович.", en: "Khokim of the district - Khudoyev Jamshid Rajabovich." }
+    },
+    site: {
+      title: { uz: "Sayt haqida", ru: "О сайте", en: "About Site" },
+      description: { uz: "Jondor tumani rasmiy portali - raqamli boshqaruv va tahlil markazi.", ru: "Официальный портал Джондорского района - центр цифрового управления и анализа.", en: "The official portal of Jondor district is a digital management and analysis center." },
+      features: { uz: "Statistika, Hujjatlar, Xizmatlar, Yangiliklar, Galereya, AI Yordamchi.", ru: "Статистика, Документы, Услуги, Новости, Галерея, AI Помощник.", en: "Statistics, Documents, Services, News, Gallery, AI Assistant." },
+      contact: { uz: "Telefon: +998 65 582-18-53", ru: "Телефон: +998 65 582-18-53", en: "Phone: +998 65 582-18-53" },
+      email: { uz: "jondor.t@exat.uz", ru: "jondor.t@exat.uz", en: "jondor.t@exat.uz" },
+      address: { uz: "Jondor tumani, M. Tarobiy ko'chasi, 26", ru: "Джондорский район, ул. М. Таробий, 26", en: "Jondor district, M. Tarobiy str., 26" }
+    }
+  },
   receptionHours: {
     governor: { days: 'Dushanba - Juma', daysRu: 'Понедельник - Пятница', time: '15:00 - 17:00', location: 'Hokimiyat binosi, 2-qavat', locationRu: 'Здание хокимията, 2-этаж' },
     citizens: { days: 'Har payshanba', daysRu: 'Каждый четверг', time: '10:00 - 13:00', phone: '+998 65 380-00-00', phoneRu: '+998 65 380-00-00' }
@@ -93,64 +129,107 @@ function App() {
   // CRUD functions
   const addNews = (item) => updateData({ ...adminData, news: [item, ...adminData.news] });
   const deleteNews = (id) => updateData({ ...adminData, news: adminData.news.filter(n => n.id !== id) });
-  
+  const updateNews = (item) => updateData({ ...adminData, news: adminData.news.map(n => n.id === item.id ? item : n) });
+
   const addService = (item) => updateData({ ...adminData, services: [...adminData.services, item] });
   const deleteService = (id) => updateData({ ...adminData, services: adminData.services.filter(s => s.id !== id) });
-  
+  const updateService = (item) => updateData({ ...adminData, services: adminData.services.map(s => s.id === item.id ? item : s) });
+
   const addStatistic = (item) => updateData({ ...adminData, statistics: [...adminData.statistics, item] });
   const deleteStatistic = (id) => updateData({ ...adminData, statistics: adminData.statistics.filter(s => s.id !== id) });
-  
+  const updateStatistic = (item) => updateData({ ...adminData, statistics: adminData.statistics.map(s => s.id === item.id ? item : s) });
+
   const addOrganization = (item) => updateData({ ...adminData, organizations: [...adminData.organizations, item] });
   const deleteOrganization = (id) => updateData({ ...adminData, organizations: adminData.organizations.filter(o => o.id !== id) });
-  
+  const updateOrganization = (item) => updateData({ ...adminData, organizations: adminData.organizations.map(o => o.id === item.id ? item : o) });
+
   const addGallery = (item) => updateData({ ...adminData, gallery: [...adminData.gallery, item] });
   const deleteGallery = (id) => updateData({ ...adminData, gallery: adminData.gallery.filter(g => g.id !== id) });
-  
+
   const addCarousel = (item) => updateData({ ...adminData, carousel: [...adminData.carousel, item] });
   const deleteCarousel = (id) => updateData({ ...adminData, carousel: adminData.carousel.filter(c => c.id !== id) });
-  
+  const updateCarousel = (item) => updateData({ ...adminData, carousel: adminData.carousel.map(c => c.id === item.id ? item : c) });
+
   const addLeadership = (item) => updateData({ ...adminData, leadership: [...adminData.leadership, item] });
   const deleteLeadership = (id) => updateData({ ...adminData, leadership: adminData.leadership.filter(l => l.id !== id) });
-  
+  const updateLeadership = (item) => updateData({ ...adminData, leadership: adminData.leadership.map(l => l.id === item.id ? item : l) });
+
   const addDocument = (item) => updateData({ ...adminData, documents: [...adminData.documents, item] });
   const deleteDocument = (id) => updateData({ ...adminData, documents: adminData.documents.filter(d => d.id !== id) });
-  
+  const updateDocument = (item) => updateData({ ...adminData, documents: adminData.documents.map(d => d.id === item.id ? item : d) });
+
   const addFaq = (item) => updateData({ ...adminData, faqs: [...adminData.faqs, item] });
   const deleteFaq = (id) => updateData({ ...adminData, faqs: adminData.faqs.filter(f => f.id !== id) });
-  
+  const updateFaq = (item) => updateData({ ...adminData, faqs: adminData.faqs.map(f => f.id === item.id ? item : f) });
+
+  // Topics functions
+  const addTopic = (item) => {
+    const updated = [...(adminData.topics || []), { ...item, id: Date.now() }];
+    updateData({ ...adminData, topics: updated });
+  };
+  const deleteTopic = (id) => {
+    const updated = (adminData.topics || []).filter(t => t.id !== id);
+    updateData({ ...adminData, topics: updated });
+  };
+  const updateTopic = (id, updatedTopic) => {
+    const updated = (adminData.topics || []).map(t => t.id === id ? { ...t, ...updatedTopic } : t);
+    updateData({ ...adminData, topics: updated });
+  };
+
+  // Mobile Info functions
+  const updateMobileInfo = (section, field, lang, value) => {
+    const updatedMobileInfo = {
+      ...adminData.mobileInfo,
+      [section]: {
+        ...adminData.mobileInfo[section],
+        [field]: {
+          ...adminData.mobileInfo[section][field],
+          [lang]: value
+        }
+      }
+    };
+    updateData({ ...adminData, mobileInfo: updatedMobileInfo });
+  };
+
   const submitContact = (data) => {
     const newContact = { ...data, id: Date.now(), date: new Date().toISOString().split('T')[0] };
     updateData({ ...adminData, contacts: [newContact, ...adminData.contacts] });
     return true;
   };
-  
+
   const subscribe = (email) => {
     if (adminData.subscribers.find(s => s.email === email)) return true;
     updateData({ ...adminData, subscribers: [...adminData.subscribers, { id: Date.now(), email, date: new Date().toISOString().split('T')[0] }] });
     return true;
   };
-  
+
   const updateReceptionHours = (data) => updateData({ ...adminData, receptionHours: data });
 
-  const t = (uz, ru) => lang === 'uz' ? uz : ru;
+  const t = (uz, ru, en) => {
+    if (lang === 'uz') return uz;
+    if (lang === 'ru') return ru;
+    return en || uz;
+  };
 
   if (loading) {
-    return <div className="fixed inset-0 flex items-center justify-center bg-white"><div className="w-12 h-12 border-4 rounded-full border-primary border-t-transparent animate-spin"></div></div>;
+    return <div className="fixed inset-0 flex items-center justify-center bg-white"><div className="w-12 h-12 border-4 rounded-full border-blue-600 border-t-transparent animate-spin"></div></div>;
   }
 
   return (
     <AppContext.Provider value={{
       lang, setLang, t, isAdmin, login, logout, adminData, updateData,
-      news: adminData.news, deleteNews, addNews,
-      services: adminData.services, deleteService, addService,
-      statistics: adminData.statistics, deleteStatistic, addStatistic,
-      organizations: adminData.organizations, deleteOrganization, addOrganization,
+      news: adminData.news, deleteNews, addNews, updateNews,
+      services: adminData.services, deleteService, addService, updateService,
+      statistics: adminData.statistics, deleteStatistic, addStatistic, updateStatistic,
+      organizations: adminData.organizations, deleteOrganization, addOrganization, updateOrganization,
       gallery: adminData.gallery, deleteGallery, addGallery,
-      carousel: adminData.carousel, deleteCarousel, addCarousel,
-      leadership: adminData.leadership, deleteLeadership, addLeadership,
-      documents: adminData.documents, deleteDocument, addDocument,
-      faqs: adminData.faqs, deleteFaq, addFaq,
+      carousel: adminData.carousel, deleteCarousel, addCarousel, updateCarousel,
+      leadership: adminData.leadership, deleteLeadership, addLeadership, updateLeadership,
+      documents: adminData.documents, deleteDocument, addDocument, updateDocument,
+      faqs: adminData.faqs, deleteFaq, addFaq, updateFaq,
       contacts: adminData.contacts, subscribers: adminData.subscribers,
+      topics: adminData.topics || [], addTopic, deleteTopic, updateTopic,
+      mobileInfo: adminData.mobileInfo, updateMobileInfo,
       receptionHours: adminData.receptionHours, submitContact, subscribe, updateReceptionHours
     }}>
       <Router>
@@ -170,7 +249,29 @@ function App() {
               <Route path="/statistics" element={<Statistics />} />
               <Route path="/dashboard" element={<DashboardStatistics />} />
               <Route path="/organizations" element={<Organizations />} />
+              <Route path="/mobile-info" element={<MobileInfo />} />
+              <Route path="/admin-topics" element={<AdminTopics />} />
               <Route path="/admin/*" element={<Admin />} />
+              
+              {/* OneID */}
+              <Route path="/oneid-login" element={<OneIDLogin />} />
+              <Route path="/oneid-register" element={<OneIDRegister />} />
+              
+              {/* ID.UZ */}
+              <Route path="/iduz-login" element={<IDUZLogin />} />
+              <Route path="/iduz-register" element={<IDUZRegister />} />
+              
+              {/* MyID */}
+              <Route path="/myid-login" element={<MyIDLogin />} />
+              <Route path="/myid-register" element={<MyIDRegister />} />
+              
+              {/* E-IMZO */}
+              <Route path="/eimzo-login" element={<EImzoLogin />} />
+              <Route path="/eimzo-register" element={<EImzoRegister />} />
+              
+              {/* my.gov.uz */}
+              <Route path="/mygov-login" element={<MyGovLogin />} />
+              <Route path="/mygov-register" element={<MyGovRegister />} />
             </Routes>
           </main>
           {!window.location.pathname.includes('/admin') && <Footer />}

@@ -10,11 +10,13 @@ import AdminLeadership from './AdminLeadership';
 import AdminFaq from './AdminFaq';
 import AdminDocuments from './AdminDocuments';
 import AdminDashboardSettings from './AdminDashboardSettings';
+import AdminTopics from './AdminTopics';
 
 export default function Admin() {
   const { 
     t, isAdmin, login, logout,
-    news, services, statistics, organizations, gallery, carousel, leadership, documents, faqs, contacts, subscribers, receptionHours, updateReceptionHours
+    news, services, statistics, organizations, gallery, carousel, leadership, documents, faqs, contacts, subscribers, receptionHours, updateReceptionHours,
+    topics
   } = useContext(AppContext);
   
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -98,6 +100,7 @@ export default function Admin() {
     { id: 'dashboardSettings', label: 'Dashboard sozlamalari', icon: 'tachometer-alt', color: 'cyan' },
     { id: 'news', label: 'Yangiliklar', icon: 'newspaper', color: 'green' },
     { id: 'services', label: 'Xizmatlar', icon: 'th-large', color: 'purple' },
+    { id: 'topics', label: '📱 Mavzular (Mobile)', icon: 'mobile-alt', color: 'indigo' },
     { id: 'statistics', label: 'Statistika', icon: 'chart-bar', color: 'orange' },
     { id: 'organizations', label: 'Tashkilotlar', icon: 'building', color: 'red' },
     { id: 'gallery', label: 'Galereya', icon: 'images', color: 'pink' },
@@ -176,6 +179,9 @@ export default function Admin() {
               {item.id === 'subscribers' && subscribers.length > 0 && (
                 <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-blue-500 rounded-full">{subscribers.length}</span>
               )}
+              {item.id === 'topics' && topics && topics.length > 0 && (
+                <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-indigo-500 rounded-full">{topics.length}</span>
+              )}
             </button>
           ))}
         </div>
@@ -214,7 +220,7 @@ export default function Admin() {
           {activeTab === 'dashboard' && (
             <div>
               <h1 className="mb-6 text-2xl font-bold text-gray-800">Dashboard</h1>
-              <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
+              <div className="grid grid-cols-2 gap-5 md:grid-cols-5">
                 <div className="p-5 bg-white border shadow-sm rounded-xl">
                   <div className="text-3xl font-bold text-primary">{news.length}</div>
                   <div className="text-sm text-gray-500">Yangiliklar</div>
@@ -222,6 +228,10 @@ export default function Admin() {
                 <div className="p-5 bg-white border shadow-sm rounded-xl">
                   <div className="text-3xl font-bold text-primary">{services.length}</div>
                   <div className="text-sm text-gray-500">Xizmatlar</div>
+                </div>
+                <div className="p-5 bg-white border shadow-sm rounded-xl">
+                  <div className="text-3xl font-bold text-primary">{topics?.length || 0}</div>
+                  <div className="text-sm text-gray-500">Mavzular (Mobile)</div>
                 </div>
                 <div className="p-5 bg-white border shadow-sm rounded-xl">
                   <div className="text-3xl font-bold text-primary">{organizations.length}</div>
@@ -256,6 +266,9 @@ export default function Admin() {
           
           {/* SERVICES TAB */}
           {activeTab === 'services' && <AdminServices />}
+          
+          {/* TOPICS TAB (YANGI - MOBILE MAVZULAR) */}
+          {activeTab === 'topics' && <AdminTopics />}
           
           {/* STATISTICS TAB */}
           {activeTab === 'statistics' && <AdminStatistics />}
